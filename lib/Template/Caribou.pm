@@ -4,33 +4,29 @@ use strict;
 use warnings;
 
 use Moose::Role;
+use Template::Caribou::Template;
 
 sub add_template {
     my ( $self, $label, $sub ) = @_;
 
-    my $wrapper = sub {
-        # $self is the Caribou object
-
-        my $output;
-        {
-            local *STDOUT;
-            open STDOUT, '>', \$output;
-            $sub->( $self, @_ );
-        }
-
-        print $output unless defined wantarray;
-
-        return $output;
-    };
-
-    $self->meta->add_method( "template_$label" => $wrapper );
-
+    template( $self->meta, $label, $sub );
 }
 
 sub render {
     my ( $self, $template, @args ) = @_;
 
-    $self->templates->$template( @args );
+    my $method = "template_$template";
+
+    my $output;
+    {
+        local *STDOUT;
+        open STDOUT, '>', \$output;
+        $self->$method( @_ );
+    }
+
+    print $output unless defined wantarray;
+
+    return $output;
 }
 
 1;
