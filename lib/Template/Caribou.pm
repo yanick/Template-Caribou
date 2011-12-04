@@ -2,9 +2,10 @@ package Template::Caribou;
 
 use strict;
 use warnings;
+no warnings qw/ uninitialized /;
 
 use Moose::Role;
-use Template::Caribou::Template;
+use Template::Caribou::Utils;
 
 sub add_template {
     my ( $self, $label, $sub ) = @_;
@@ -17,14 +18,27 @@ sub render {
 
     my $method = "template_$template";
 
-    my $output;
+    my $output = do
     {
+        local $Template::Caribou::TEMPLATE =
+            $Template::Caribou::TEMPLATE || $self;
+            
+        local $Template::Caribou::IN_RENDER = 1;
         local *STDOUT;
-        open STDOUT, '>', \$output;
-        $self->$method( @_ );
-    }
+        local *::RAW;
+        local $Template::Caribou::OUTPUT;
+        local %Template::Caribou::attr;
+        tie *STDOUT, 'Template::Caribou::Output';
+        tie *::RAW, 'Template::Caribou::OutputRaw';
+        my $res = $self->$method( @_ );
 
-    print $output unless defined wantarray;
+        $Template::Caribou::OUTPUT 
+            or ref $res ? $res : Template::Caribou::Output::escape( $res );
+    };
+
+    $output = Template::Caribou::String->new( $output );
+
+    print $output unless defined wantarray or $Template::Caribou::IN_RENDER;
 
     return $output;
 }
