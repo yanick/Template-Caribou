@@ -54,9 +54,20 @@ template 'escape_inner' => sub {
 test 'escaping' => sub {
     my $self = shift;
 
-    is ''.$self->render('escape_outer') 
+    is $self->render('escape_outer') 
         => qq{<foo></foo><foo><bar\n >&lt;yay></bar></foo><foo></foo>};
 
+};
+
+template 'end_show' => sub {
+    foo { };
+    show( 'inner' );
+};
+
+test 'end_show' => sub {
+    my $self = shift;
+
+    is $self->render( 'end_show' ) => '<foo></foo>hello world';
 };
 
 run_me;

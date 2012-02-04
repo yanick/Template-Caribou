@@ -1,4 +1,48 @@
 package Template::Caribou;
+# ABSTRACT: class-based *ML-centric templating system
+
+=head1 SYNOPSIS
+
+    package MyTemplate;
+
+    use Moose;
+    with 'Template::Caribou';
+
+    use Template::Caribou::Utils;
+    use Template::Caribou::Tags::HTML;
+
+    has name => ( is => 'ro' );
+
+    template page => sub {
+        html { 
+            head { title { 'Example' } };
+            show( 'body' );
+        }
+    };
+
+    template body => sub {
+        my $self = shift;
+
+        body { 
+            h1 { 'howdie ' . $self->name } 
+        }
+    };
+
+    package main;
+
+    my $template = MyTemplate->new( name => 'Bob' );
+    print $template->render('page');
+
+=head1 DESCRIPTION
+
+WARNING: Codebase is alpha with extreme prejudice. Assume that bugs are
+teeming and that the API is subject to change.
+
+L<Template::Caribou> is a L<Moose>-based, class-centric templating system
+mostly aimed at producing sgml-like outputs (HTML, XML, SVG, etc). It is
+heavily inspired by L<Template::Declare>.
+
+=cut
 
 use strict;
 use warnings;
@@ -41,12 +85,20 @@ sub render {
     $output = Template::Caribou::String->new( $output ) 
         if $Template::Caribou::IN_RENDER;
 
-    print ::RAW $output unless defined wantarray or !$Template::Caribou::IN_RENDER;
+    print ::RAW $output if $Template::Caribou::IN_RENDER and not defined wantarray;
 
     return $output;
 }
 
 1;
 
+=head1 SEE ALSO
+
+L<http://babyl.dyndns.org/techblog/entry/caribou>  - The original blog entry
+introducing L<Template::Caribou>.
+
+L<Template::Declare>
+
+=cut
 
 

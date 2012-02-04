@@ -78,7 +78,7 @@ sub render_tag {
 }
 
 sub show {
-    $Template::Caribou::TEMPLATE->render( @_ );
+    print ::RAW $Template::Caribou::TEMPLATE->render( @_ );
 }
 
 
