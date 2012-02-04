@@ -7,14 +7,16 @@ use Template::Caribou::Utils;
 
 use parent 'Exporter';
 
-our @EXPORT = qw/ p html head  h1 body emphasis /;
+our @EXPORT = qw/ p html head  h1 body emphasis div style /;
 
 
-sub p(&) { render_tag( 'p', undef, shift ) }
-sub html(&) { render_tag( 'html', undef, shift ) }
-sub head(&) { render_tag( 'head', undef, shift ) }
-sub body(&) { render_tag( 'body', undef, shift ) }
-sub h1(&) { render_tag( 'h1', undef, shift ) }
-sub emphasis(&) { render_tag( 'em', undef, shift ) }
+sub p(&) { render_tag( 'p', shift ) }
+sub html(&) { render_tag( 'html', shift ) }
+sub head(&) { render_tag( 'head', shift ) }
+sub body(&) { render_tag( 'body', shift ) }
+sub h1(&) { render_tag( 'h1', shift ) }
+sub emphasis(&) { render_tag( 'em', shift ) }
+sub div(&) { render_tag( 'div', shift ) }
+sub style(&) { render_tag( 'style', shift ) }
 
 1;

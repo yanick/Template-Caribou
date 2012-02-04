@@ -30,7 +30,7 @@ sub template {
 }
 
 sub render_tag {
-    my ( $tag, $groom, $inner_sub ) = @_;
+    my ( $tag, $inner_sub, $groom ) = @_;
 
     my $inner;
     my %attr;

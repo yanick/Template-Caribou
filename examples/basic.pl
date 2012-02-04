@@ -12,5 +12,5 @@ my $template = HelloWorld->new(
     user_name => 'Yanick'
 );
 
-$template->render( 'page' );
+print $template->render( 'page' );
 

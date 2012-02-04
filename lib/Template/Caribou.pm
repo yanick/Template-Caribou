@@ -36,9 +36,12 @@ sub render {
             or ref $res ? $res : Template::Caribou::Output::escape( $res );
     };
 
-    $output = Template::Caribou::String->new( $output );
+    # if we are still within a render, we turn the string
+    # into an object to say "don't touch"
+    $output = Template::Caribou::String->new( $output ) 
+        if $Template::Caribou::IN_RENDER;
 
-    print $output unless defined wantarray or $Template::Caribou::IN_RENDER;
+    print ::RAW $output unless defined wantarray or !$Template::Caribou::IN_RENDER;
 
     return $output;
 }
