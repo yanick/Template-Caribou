@@ -1,0 +1,56 @@
+---
+abstract: 'class-based *ML-centric templating system'
+author:
+  - 'Yanick Champoux'
+build_requires:
+  Carp: 0
+  Module::Build: 0.3601
+  Scalar::Util: 0
+  Test::More: 0.94
+  Test::Routine: 0
+  Test::Routine::Util: 0
+  perl: 5.004
+configure_requires:
+  Module::Build: 0.3601
+dynamic_config: 0
+generated_by: 'Dist::Zilla version 4.300002, CPAN::Meta::Converter version 2.112150'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Template-Caribou
+provides:
+  Template::Caribou:
+    file: lib/Template/Caribou.pm
+    version: v0.1.0
+  Template::Caribou::Output:
+    file: lib/Template/Caribou/Utils.pm
+    version: v0.1.0
+  Template::Caribou::OutputRaw:
+    file: lib/Template/Caribou/Utils.pm
+    version: v0.1.0
+  Template::Caribou::String:
+    file: lib/Template/Caribou/Utils.pm
+    version: v0.1.0
+  Template::Caribou::Tags::HTML:
+    file: lib/Template/Caribou/Tags/HTML.pm
+    version: v0.1.0
+  Template::Caribou::Utils:
+    file: lib/Template/Caribou/Utils.pm
+    version: v0.1.0
+requires:
+  Exporter: 0
+  Moose: 0
+  Moose::Exporter: 0
+  Moose::Role: 0
+  Tie::Handle: 0
+  overload: 0
+  parent: 0
+  strict: 0
+  warnings: 0
+resources:
+  bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=Template-Caribou
+  homepage: http://search.cpan.org/dist/Template-Caribou/
+  repository: https://github.com/yanick/Template-Caribou.git
+version: 0.1.0
+x_authority: cpan:YANICK

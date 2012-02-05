@@ -1,48 +1,12 @@
 package Template::Caribou;
+BEGIN {
+  $Template::Caribou::AUTHORITY = 'cpan:YANICK';
+}
+{
+  $Template::Caribou::VERSION = '0.1.0';
+}
 # ABSTRACT: class-based *ML-centric templating system
 
-=head1 SYNOPSIS
-
-    package MyTemplate;
-
-    use Moose;
-    with 'Template::Caribou';
-
-    use Template::Caribou::Utils;
-    use Template::Caribou::Tags::HTML;
-
-    has name => ( is => 'ro' );
-
-    template page => sub {
-        html { 
-            head { title { 'Example' } };
-            show( 'body' );
-        }
-    };
-
-    template body => sub {
-        my $self = shift;
-
-        body { 
-            h1 { 'howdie ' . $self->name } 
-        }
-    };
-
-    package main;
-
-    my $template = MyTemplate->new( name => 'Bob' );
-    print $template->render('page');
-
-=head1 DESCRIPTION
-
-WARNING: Codebase is alpha with extreme prejudice. Assume that bugs are
-teeming and that the API is subject to change.
-
-L<Template::Caribou> is a L<Moose>-based, class-centric templating system
-mostly aimed at producing sgml-like outputs (HTML, XML, SVG, etc). It is
-heavily inspired by L<Template::Declare>.
-
-=cut
 
 use strict;
 use warnings;
@@ -92,6 +56,61 @@ sub render {
 
 1;
 
+
+
+
+__END__
+=pod
+
+=head1 NAME
+
+Template::Caribou - class-based *ML-centric templating system
+
+=head1 VERSION
+
+version 0.1.0
+
+=head1 SYNOPSIS
+
+    package MyTemplate;
+
+    use Moose;
+    with 'Template::Caribou';
+
+    use Template::Caribou::Utils;
+    use Template::Caribou::Tags::HTML;
+
+    has name => ( is => 'ro' );
+
+    template page => sub {
+        html { 
+            head { title { 'Example' } };
+            show( 'body' );
+        }
+    };
+
+    template body => sub {
+        my $self = shift;
+
+        body { 
+            h1 { 'howdie ' . $self->name } 
+        }
+    };
+
+    package main;
+
+    my $template = MyTemplate->new( name => 'Bob' );
+    print $template->render('page');
+
+=head1 DESCRIPTION
+
+WARNING: Codebase is alpha with extreme prejudice. Assume that bugs are
+teeming and that the API is subject to change.
+
+L<Template::Caribou> is a L<Moose>-based, class-centric templating system
+mostly aimed at producing sgml-like outputs (HTML, XML, SVG, etc). It is
+heavily inspired by L<Template::Declare>.
+
 =head1 SEE ALSO
 
 L<http://babyl.dyndns.org/techblog/entry/caribou>  - The original blog entry
@@ -99,6 +118,16 @@ introducing L<Template::Caribou>.
 
 L<Template::Declare>
 
-=cut
+=head1 AUTHOR
 
+Yanick Champoux
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2012 by Yanick Champoux.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
 

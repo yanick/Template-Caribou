@@ -1,0 +1,43 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.68.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+SHA1 88f17908dc3e9ff4afd6543752fd67827c03255a Build.PL
+SHA1 764b5c31dd82073b4215301289ca65b17269831c Changes
+SHA1 f64bdc6d31def9684cb94cf4c6561c3d40b36aa5 INSTALL
+SHA1 33260abc93b43a44581b0b6263d7e4318f4122bb LICENSE
+SHA1 086c00e6e9551a9acc291ef7fe64f3a8a9b43b3c MANIFEST
+SHA1 efa66e8b1647a854054d1626b1de5192a44ae4c8 MANIFEST.SKIP
+SHA1 5ad5c5d441987a84b1f00de8162391e8ed5e942d META.json
+SHA1 da0bb49cfd05009994cb22886ef42abfedceb865 META.yml
+SHA1 5c6cc411334254096faa96e95dca4f2b1b22e57b README
+SHA1 498b95428ae89413e640666a311af51d27d7f194 README.mkdn
+SHA1 e3f4458593507713964c95e0747eb4423af5500b examples/basic.pl
+SHA1 dc3c50fa211b08e0073bce6195508856f4803a76 examples/lib/HelloWorld.pm
+SHA1 b15c1f6115e634af3825ba0bd2d60c89cc069ef5 examples/lib/MyTags.pm
+SHA1 bdfd18294ab25c4a7127b0ea022de69cb07edba7 examples/lib/MyWebPage.pm
+SHA1 817ced2b04a8b8b4d61d9c0c90ce38f108979507 examples/simple.pl
+SHA1 93aaf3f7453e07fd41f2a95daff4548c27eb6055 lib/Template/Caribou.pm
+SHA1 3fc33e4674b16b5ddf4edcbfae61b16fec15fc2c lib/Template/Caribou/Tags/HTML.pm
+SHA1 dcc3ae94851a31d1a9a0cd649d465d079a549db8 lib/Template/Caribou/Utils.pm
+SHA1 473906254ecd96009795d4b7fbc82fac48c03ecd t/000-report-versions.t
+SHA1 dadc925ae5fcf2b1730c7b9a6ea92310b3959a5c t/basic.t
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iEYEARECAAYFAk8u4FgACgkQ34Hwf+GwC4xcwgCgmJdHx978DWEBP38iKpw0bKq8
+Ta4AoJPMFSP+E/vP0CqNko0GiTjvszQU
+=K/nH
+-----END PGP SIGNATURE-----

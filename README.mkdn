@@ -1,0 +1,66 @@
+# NAME
+
+Template::Caribou - class-based *ML-centric templating system
+
+# VERSION
+
+version 0.1.0
+
+# SYNOPSIS
+
+    package MyTemplate;
+
+    use Moose;
+    with 'Template::Caribou';
+
+    use Template::Caribou::Utils;
+    use Template::Caribou::Tags::HTML;
+
+    has name => ( is => 'ro' );
+
+    template page => sub {
+        html { 
+            head { title { 'Example' } };
+            show( 'body' );
+        }
+    };
+
+    template body => sub {
+        my $self = shift;
+
+        body { 
+            h1 { 'howdie ' . $self->name } 
+        }
+    };
+
+    package main;
+
+    my $template = MyTemplate->new( name => 'Bob' );
+    print $template->render('page');
+
+# DESCRIPTION
+
+WARNING: Codebase is alpha with extreme prejudice. Assume that bugs are
+teeming and that the API is subject to change.
+
+[Template::Caribou](http://search.cpan.org/perldoc?Template::Caribou) is a [Moose](http://search.cpan.org/perldoc?Moose)-based, class-centric templating system
+mostly aimed at producing sgml-like outputs (HTML, XML, SVG, etc). It is
+heavily inspired by [Template::Declare](http://search.cpan.org/perldoc?Template::Declare).
+
+# SEE ALSO
+
+[http://babyl.dyndns.org/techblog/entry/caribou](http://babyl.dyndns.org/techblog/entry/caribou)  - The original blog entry
+introducing [Template::Caribou](http://search.cpan.org/perldoc?Template::Caribou).
+
+[Template::Declare](http://search.cpan.org/perldoc?Template::Declare)
+
+# AUTHOR
+
+Yanick Champoux
+
+# COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2012 by Yanick Champoux.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
