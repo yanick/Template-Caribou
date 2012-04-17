@@ -12,6 +12,7 @@ use Moose;
 use MooseX::Types::Path::Class;
 
 use Template::Caribou::Utils;
+
 use Template::Caribou::Tags::HTML qw/ :all /;
 
 use Template::Caribou::Tags
@@ -38,9 +39,7 @@ has snippets => (
 );
 
 
-sub _build_snippets {
-    my $self = shift;
-
+method _build_snippets {
     my @lines = $self->snippet_file->slurp;
 
     my @all_snippets;
@@ -110,6 +109,7 @@ template snippet => method ( $label, $comment, $code ) {
         };
         div_code sub {
             my $regex = qr#(\$\{\d+.*?\})#;
+
             for ( split $regex, $code ) {
                 if ( /$regex/ ) {
                     span_placeholder { $_ };
