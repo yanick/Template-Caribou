@@ -40,15 +40,11 @@ has snippet_files => (
 );
 
 template webpage => method {
-    html {
-        body {
-            ul {
-                li {
-                    anchor $_->basename.'.html' => $_->basename;
-                } for $self->all_snippet_files;
-            }
-        }
-    }
+    html { body { ul { 
+        li {
+            anchor $_->basename.'.html' => $_->basename;
+        } for $self->all_snippet_files;
+    } } }
 };
 
 method generate_pages {
@@ -68,5 +64,3 @@ sub generate_snippet_file {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
-

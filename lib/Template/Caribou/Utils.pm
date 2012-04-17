@@ -4,6 +4,8 @@ use strict;
 use warnings;
 no warnings qw/ uninitialized /;
 
+use Carp;
+
 use Moose;
 
 use Moose::Exporter;
@@ -18,8 +20,20 @@ Moose::Exporter->setup_import_methods(
 );
 
 sub attr(@){
-    my %attr = @_;
-    $Template::Caribou::attr{$_} = $attr{$_} for keys %attr;
+
+    return $Template::Caribou::attr{$_[0]} if @_ == 1;
+
+    croak "number of attributes must be even" if @_ % 2;
+
+    while( my ( $k, $v ) = splice @_, 0, 2 ) {
+        if ( $k =~ s/^\+// ) {
+            $Template::Caribou::attr{$k} .= ' '. $v;
+        }
+        else {
+            $Template::Caribou::attr{$k} = $v;
+        }
+    }
+
     return;
 }
 

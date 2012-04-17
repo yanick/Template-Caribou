@@ -70,6 +70,24 @@ test 'end_show' => sub {
     is $self->render( 'end_show' ) => '<foo></foo>hello world';
 };
 
+template 'attributes' => sub {
+    foo {
+        attr foo => 'bar';
+        attr 'foo';
+    };
+    foo {
+        attr a => 1, b => 2;
+        attr '+a' => 3, b => 4;
+    }
+};
+
+test attributes => sub {
+    my $self = shift;
+
+    is $self->render( 'attributes' ) => 
+        '<foo foo="bar">bar</foo><foo a="1 3" b="4"></foo>';
+};
+
 run_me;
 done_testing;
 

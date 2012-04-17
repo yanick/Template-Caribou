@@ -13,14 +13,12 @@ use MooseX::Types::Path::Class;
 
 use Template::Caribou::Utils;
 use Template::Caribou::Tags::HTML qw/ :all /;
+
 use Template::Caribou::Tags
-    mytag => { -as => 'div_comment', class => 'comment' },
-    mytag => { -as => 'div_code',    class => 'code' },
-    mytag => { -as => 'div_snippet', class => 'snippet' },
-    mytag => { -as => 'div_keyword', class => 'keyword' },
-    mytag => { -as => 'div_comment', class => 'comment' },
-    mytag => { -as => 'div_snippets', class => 'snippets' },
     mytag => { -as => 'span_placeholder', class => 'placeholder', tag => 'span' },
+    map { ( mytag => { -as => "div_$_", class => $_ } ) } qw/
+        comment code snippet keyword snippets header
+    /
     ;
 
 
@@ -106,7 +104,7 @@ template section => method( $title,@snippets ) {
 
 template snippet => method ( $label, $comment, $code ) {
     div_snippet {
-        div { attr class => 'header';
+        div_header { 
             div_keyword { $label; };
             div_comment { $comment; };
         };
