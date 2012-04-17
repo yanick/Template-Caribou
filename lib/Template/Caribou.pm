@@ -64,8 +64,8 @@ sub render {
 
     my $output = do
     {
-        local $Template::Caribou::TEMPLATE =
-            $Template::Caribou::TEMPLATE || $self;
+        local $Template::Caribou::TEMPLATE = $self;
+        #$Template::Caribou::TEMPLATE || $self;
             
         local $Template::Caribou::IN_RENDER = 1;
         local *STDOUT;
@@ -74,7 +74,7 @@ sub render {
         local %Template::Caribou::attr;
         tie *STDOUT, 'Template::Caribou::Output';
         tie *::RAW, 'Template::Caribou::OutputRaw';
-        my $res = $self->$method( @_ );
+        my $res = $self->$method( @args );
 
         $Template::Caribou::OUTPUT 
             or ref $res ? $res : Template::Caribou::Output::escape( $res );

@@ -47,7 +47,7 @@ sub render_tag {
 
         local $Template::Caribou::INDENT = $Template::Caribou::INDENT + 1;
 
-        my $res = $inner_sub->();
+        my $res = ref $inner_sub ? $inner_sub->() : $inner_sub;
 
         $inner = $Template::Caribou::OUTPUT 
             || ( ref $res ? $res : Template::Caribou::Output::escape( $res ) );
