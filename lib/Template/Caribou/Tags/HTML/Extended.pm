@@ -1,4 +1,4 @@
-package Template::Caribou::Tags::HTML;
+package Template::Caribou::Tags::HTML::Extended;
 
 use strict;
 use warnings;
@@ -6,19 +6,14 @@ use warnings;
 use Template::Caribou::Utils;
 
 BEGIN {
-    @Template::Caribou::Tags::HTML::TAGS =  qw/
-        p html head h1 h2 h3 h4 h5 h6 body emphasis div
-        style title span li ol ul i b bold a form
+    @Template::Caribou::Tags::HTML::Extended::TAGS =  qw/
+        css anchor
     /;
 }
 
-use Template::Caribou::Tags
-    map { ( mytag => { -as => $_, name => $_ } ) }
-        @Template::Caribou::Tags::HTML::TAGS;
-
 use Sub::Exporter -setup => {
     exports => [
-        @Template::Caribou::Tags::HTML::TAGS
+        @Template::Caribou::Tags::HTML::Extended::TAGS
     ],
 };
 

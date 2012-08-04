@@ -40,6 +40,8 @@ sub attr(@){
 sub template { 
     my ( $meta, $label, $sub ) = @_;
 
+    $DB::single = 1;
+
     $meta->add_method( "template_$label" => $sub );
 }
 
@@ -59,7 +61,7 @@ sub render_tag {
         tie *STDOUT, 'Template::Caribou::Output';
         tie *::RAW, 'Template::Caribou::OutputRaw';
 
-        local $Template::Caribou::INDENT = $Template::Caribou::INDENT + 1;
+        local $Template::Caribou::INDENT = 0;#$Template::Caribou::INDENT + 1;
 
         my $res = ref $inner_sub ? $inner_sub->() : $inner_sub;
 

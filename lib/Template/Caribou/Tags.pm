@@ -9,10 +9,6 @@ use Template::Caribou::Utils;
 use Sub::Exporter -setup => {
     exports => [
         mytag => \&_gen_generic_tag,
-        map { $_ => \&_gen_simple_tag } qw/ 
-            p html head h1 body emphasis div
-            style title span
-        /,
     ],
 };
 
@@ -23,7 +19,7 @@ sub _gen_generic_tag {
 
     return sub(&) {
         my $inner = shift;
-        render_tag( $arg->{tag} || 'div', 
+        render_tag( $arg->{name} || 'div', 
             sub {
             attr class => $c if defined $c;
             $inner->();

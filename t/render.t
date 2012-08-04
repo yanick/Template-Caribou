@@ -1,0 +1,34 @@
+use strict;
+use warnings;
+
+use Test::More;
+
+use Test::Routine;
+use Test::Routine::Util;
+
+use Template::Caribou::Utils;
+
+use Method::Signatures;
+
+with 'Template::Caribou';
+
+use Template::Caribou::Tags 
+    mytag => { tag => 'foo', -as => 'foo' },
+    mytag => { tag => 'bar', -as => 'bar' },
+;
+
+test string => method {
+    is $self->render(sub { 'hi there' }) => 'hi there';
+};
+
+test one_tag => method {
+    is $self->render(sub { foo { } }) => '<foo></foo>';
+    is $self->render(sub { foo { 'moin' } }) => '<foo>moin</foo>';
+};
+
+test two_tags => method {
+    is $self->render(sub { foo { bar { 'yay' } } }) => "<foo><bar>yay</bar></foo>";
+};
+
+run_me;
+done_testing;
