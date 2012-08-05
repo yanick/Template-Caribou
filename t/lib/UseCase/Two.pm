@@ -1,4 +1,4 @@
-package UseCase::One;
+package UseCase::Two;
 
 use strict;
 use warnings;
@@ -11,6 +11,8 @@ use Template::Caribou::Tags::HTML qw/ :all /;
 
 with 'Template::Caribou';
 
-__PACKAGE__->import_template( 't/corpus/usecase_1.bou' );
+__PACKAGE__->import_template_dir( 't/corpus/usecase_2' );
 
 1;
+
+

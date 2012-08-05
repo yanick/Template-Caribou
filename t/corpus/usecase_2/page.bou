@@ -1,0 +1,6 @@
+html {
+    $self->render('head');
+    $self->render('body');
+    '';
+}
+
