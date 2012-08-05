@@ -9,7 +9,7 @@ use Test::More;
 
 my $bou = UseCase::One->new( pretty_render => 1 );
 
-is ref( $bou->templates->{usecase_1} ) => 'CODE', 'template loaded';
+is ref( $bou->t( "usecase_1" ) ) => 'CODE', 'template loaded';
 
 my $output = $bou->render( 'usecase_1' );
 

@@ -52,18 +52,19 @@ use Moose::Role;
 use MooseX::SemiAffordanceAccessor;
 use MooseX::ClassAttribute;
 use Template::Caribou::Utils;
-use Path::Class qw/ file /;
+use Path::Class qw/ file dir /;
+use Method::Signatures;
+use Moose::Exporter;
 
-class_has 'templates' => (
-    isa => 'HashRef',
-    traits => [ 'Hash' ],
-    is => 'ro',
-    default => sub { {} },
-    handles => {
-        t => 'get',
-        set_template => 'set',
-    },
+Moose::Exporter->setup_import_methods(
+    as_is => [ 'template' ],
 );
+
+func template( $name, $code ) {
+    my $class = caller(0);
+    $class->set_template( $name => $code );
+}
+
 
 =method pretty_render()
 
@@ -92,36 +93,52 @@ has pretty_renderer => (
         my $output;
 
         open my $fh, '>', \$output;
+        my $input = shift;
 
-        my $twig = XML::Twig->new( pretty_print => 'indented_close_tag',
-        empty_tags => 'html', 
-        #output_filter => 'html'
-        )->parse(shift)->print($fh);
+        eval {
+            my $twig = XML::Twig->new( pretty_print => 'indented_close_tag',
+            empty_tags => 'html', 
+            #output_filter => 'html'
+            )->parse($input)->print($fh);
+        };
 
-        return $output;
+        # if we failed, let's at least return the dirty version
+        return $@ ? $input : $output;
     }},
 );
 
 
 
-sub set_template {
-    my $self = shift;
-    my( $name, $value ) = @_;
-
-    $self->templates->{$name} = $value;
+method set_template($name,$value) {
+    $self->meta->add_method( "template $name" => $value );
 }
+
+method t($name) {
+    return $self->meta->get_method( "template $name" )->body;
+}
+
+=method import_template( $name => $file )
+
+Imports the content of I<$file> as a template. If I<$name> is not given, 
+it is assumed to be the basename of the file, minus the extension.
+
+=cut
 
 sub import_template {
     my $self = shift;
-    my $file = file( shift );
 
-    ( my $name = $file->basename ) =~ s/\..*?$//;
+    my( $name, $file ) = @_ == 2 ? @_ : ( undef, @_ );
 
-    my $class = $self;
+    $file = file($file);
+
+    ( $name = $file->basename ) =~ s/\..*?$// unless $name;
+
+    my $class = ref( $self ) || $self;
 
     my $sub = eval <<"END_EVAL";
 package $class;
-sub {
+use Method::Signatures;
+method {
 # line 1 "@{[ $file->absolute ]}"
     @{[ $file->slurp ]}
 }
@@ -130,6 +147,29 @@ END_EVAL
     die $@ if $@;
 
     $self->set_template( $name => $sub );
+}
+
+=method import_template_dir( $directory )
+
+Imports all the files with a C<.bou> extension in I<$directory>
+as templates (non-recursively).  If I<$directory> is not given, look into the module's
+directory as given by L<File::ShareDir>. 
+
+=cut
+
+method import_template_dir($directory = undef) {
+    $DB::single = 1;
+    unless($directory) {
+        require File::ShareDir;
+        $directory = module_dir( ref $self || $self );
+    };
+
+   $directory = dir( $directory );
+
+   for ( grep { $_->basename =~ /\.bou$/ } grep { -f $_ } $directory->children ) {
+        $self->import_template("$_");      
+   }
+
 }
 
 sub add_template {
@@ -171,6 +211,23 @@ sub render {
     if( !$Template::Caribou::IN_RENDER and $self->pretty_render ) {
         $output = $self->pretty_renderer->( $output );
     }
+
+    return $output;
+}
+
+=method show( $template, @args )
+
+Outside of a template, behaves like C<render()>. In a template, prints out
+the result of the rendering in addition of returning it.
+
+=cut
+
+sub show {
+    my $self = shift;
+
+    my $output = $self->render(@_);
+
+    print ::RAW $output if $Template::Caribou::IN_RENDER;
 
     return $output;
 }

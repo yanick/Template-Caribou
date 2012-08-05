@@ -3,7 +3,7 @@ use warnings;
 
 package Test;
 
-use Test::More tests => 5;
+use Test::More tests => 6;
 
 use Template::Caribou::Tags::HTML::Extended ':all';
 
@@ -16,6 +16,9 @@ my $bou = Test->new;
 sub r(&) {
     $bou->render(shift);
 }
+
+is r { submit "foo", id => 'bar'; } 
+    => '<input id="bar" type="submit" value="foo" />', 'submit';
 
 
 is r { css "X" } 

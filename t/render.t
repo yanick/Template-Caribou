@@ -13,8 +13,8 @@ use Method::Signatures;
 with 'Template::Caribou';
 
 use Template::Caribou::Tags 
-    mytag => { tag => 'foo', -as => 'foo' },
-    mytag => { tag => 'bar', -as => 'bar' },
+    mytag => { name => 'foo', -as => 'foo' },
+    mytag => { name => 'bar', -as => 'bar' },
 ;
 
 test string => method {
@@ -22,7 +22,7 @@ test string => method {
 };
 
 test one_tag => method {
-    is $self->render(sub { foo { } }) => '<foo></foo>';
+    is $self->render(sub { foo { } }) => '<foo />';
     is $self->render(sub { foo { 'moin' } }) => '<foo>moin</foo>';
 };
 
