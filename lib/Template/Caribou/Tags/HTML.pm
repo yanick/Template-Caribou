@@ -23,6 +23,7 @@ use Sub::Exporter -setup => {
     exports => [
         @Template::Caribou::Tags::HTML::TAGS
     ],
+    groups => { default => ':all' },
 };
 
 1;

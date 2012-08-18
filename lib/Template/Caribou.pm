@@ -54,11 +54,13 @@ use MooseX::ClassAttribute;
 use Template::Caribou::Utils;
 use Path::Class qw/ file dir /;
 use Method::Signatures;
-use Moose::Exporter;
 
-Moose::Exporter->setup_import_methods(
-    as_is => [ 'template' ],
-);
+use Template::Caribou::Tags;
+
+use Sub::Exporter -setup => {
+    exports => [ 'template', 'attr' ],
+    groups => { default => [qw/ :all /] },
+};
 
 func template( $name, $code ) {
     my $class = caller(0);

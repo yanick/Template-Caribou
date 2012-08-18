@@ -10,7 +10,8 @@ use Template::Caribou::Tags ':all';
 
 use Sub::Exporter -setup => {
     exports => [qw/ css anchor image markdown javascript js_include submit
-    less /]
+    less /],
+    groups => { default => ':all' },
 };
 
 =head2 submit $value, %attr

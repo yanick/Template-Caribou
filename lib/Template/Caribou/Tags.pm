@@ -13,6 +13,7 @@ use Sub::Exporter -setup => {
         qw/ attr render_tag /,
         mytag => \&_gen_generic_tag,
     ],
+    groups => { default => [ 'attr' ] },
 };
 
 sub _gen_generic_tag {
