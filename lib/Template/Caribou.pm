@@ -48,6 +48,7 @@ use strict;
 use warnings;
 no warnings qw/ uninitialized /;
 
+use Carp;
 use Moose::Role;
 use MooseX::SemiAffordanceAccessor;
 use MooseX::ClassAttribute;
@@ -56,11 +57,11 @@ use Path::Class qw/ file dir /;
 use Method::Signatures;
 
 use Template::Caribou::Tags;
+use Moose::Exporter;
 
-use Sub::Exporter -setup => {
-    exports => [ 'template', 'attr' ],
-    groups => { default => [qw/ :all /] },
-};
+Moose::Exporter->setup_import_methods(
+    as_is => [ 'template', 'attr', 'show' ],
+);
 
 func template( $name, $code ) {
     my $class = caller(0);
@@ -79,37 +80,29 @@ before being returned by the C<render()> method.
 
 =cut
 
-has pretty_render => (
+use Moose::Util::TypeConstraints;
+
+role_type 'Formatter', { 
+    role => 'Template::Caribou::Formatter' 
+};
+
+coerce Formatter 
+    => from 'Str' => via {
+    s/^\+/Template::Caribou::Formatter::/;
+    eval "use $_; 1" 
+        or die "couldn't load '$_': $@";
+
+    $_->new;
+};
+
+has formatter => (
     is => 'rw',
-    isa => 'Bool',
-    default => 0,
-    writer => 'enable_pretty_render',
+    does => 'Formatter',
+    predicate => 'has_formatter',
+    clearer => 'clear_formatter',
+    handles => 'Template::Caribou::Formatter',
+    coerce => 1,
 );
-
-has pretty_renderer => (
-    is => 'rw',
-    default => sub {
-    sub{ 
-        require XML::Twig;
-
-        my $output;
-
-        open my $fh, '>', \$output;
-        my $input = shift;
-
-        eval {
-            my $twig = XML::Twig->new( pretty_print => 'indented_close_tag',
-            empty_tags => 'html', 
-            #output_filter => 'html'
-            )->parse($input)->print($fh);
-        };
-
-        # if we failed, let's at least return the dirty version
-        return $@ ? $input : $output;
-    }},
-);
-
-
 
 method set_template($name,$value) {
     $self->meta->add_method( "template $name" => $value );
@@ -119,10 +112,19 @@ method t($name) {
     return $self->meta->get_method( "template $name" )->body;
 }
 
+method all_templates {
+    return 
+        sort
+        map { /\s(.*)/ }
+        grep { /^template / } $self->meta->get_method_list;
+}
+
 =method import_template( $name => $file )
 
 Imports the content of I<$file> as a template. If I<$name> is not given, 
-it is assumed to be the basename of the file, minus the extension.
+it is assumed to be the basename of the file, minus the extension. 
+
+Returns the name of the imported template.
 
 =cut
 
@@ -149,29 +151,26 @@ END_EVAL
     die $@ if $@;
 
     $self->set_template( $name => $sub );
+
+    return $name;
 }
 
 =method import_template_dir( $directory )
 
 Imports all the files with a C<.bou> extension in I<$directory>
-as templates (non-recursively).  If I<$directory> is not given, look into the module's
-directory as given by L<File::ShareDir>. 
+as templates (non-recursively).  
+
+Returns the name of the imported templates.
 
 =cut
 
-method import_template_dir($directory = undef) {
-    $DB::single = 1;
-    unless($directory) {
-        require File::ShareDir;
-        $directory = module_dir( ref $self || $self );
-    };
+method import_template_dir($directory) {
 
    $directory = dir( $directory );
 
-   for ( grep { $_->basename =~ /\.bou$/ } grep { -f $_ } $directory->children ) {
-        $self->import_template("$_");      
-   }
-
+   return map {
+        $self->import_template("$_")      
+   } grep { $_->basename =~ /\.bou$/ } grep { -f $_ } $directory->children;
 }
 
 sub add_template {
@@ -210,8 +209,8 @@ sub render {
 
     print ::RAW $output if $Template::Caribou::IN_RENDER and not defined wantarray;
 
-    if( !$Template::Caribou::IN_RENDER and $self->pretty_render ) {
-        $output = $self->pretty_renderer->( $output );
+    if( !$Template::Caribou::IN_RENDER and $self->has_formatter ) {
+        $output = $self->format($output);
     }
 
     return $output;
@@ -225,13 +224,10 @@ the result of the rendering in addition of returning it.
 =cut
 
 sub show {
-    my $self = shift;
+    croak "'show()' must be called from within a template"
+        unless $Template::Caribou::IN_RENDER;
 
-    my $output = $self->render(@_);
-
-    print ::RAW $output if $Template::Caribou::IN_RENDER;
-
-    return $output;
+    print ::RAW $Template::Caribou::TEMPLATE->render( @_ );
 }
 
 1;

@@ -6,13 +6,10 @@ use Test::More;
 use Test::Routine;
 use Test::Routine::Util;
 
-use Template::Caribou::Utils;
+use Template::Caribou;
+use Template::Caribou::Tags qw/ render_tag /;
 
 with 'Template::Caribou';
-
-test 'it works' => sub {
-    pass;
-};
 
 template inner => sub {
     'hello world';
@@ -55,7 +52,7 @@ test 'escaping' => sub {
     my $self = shift;
 
     is $self->render('escape_outer') 
-        => qq{<foo></foo><foo><bar\n >&lt;yay></bar></foo><foo></foo>};
+        => qq{<foo /><foo><bar>&lt;yay></bar></foo><foo />};
 
 };
 
@@ -67,7 +64,7 @@ template 'end_show' => sub {
 test 'end_show' => sub {
     my $self = shift;
 
-    is $self->render( 'end_show' ) => '<foo></foo>hello world';
+    is $self->render( 'end_show' ) => '<foo />hello world';
 };
 
 template 'attributes' => sub {
@@ -85,7 +82,7 @@ test attributes => sub {
     my $self = shift;
 
     is $self->render( 'attributes' ) => 
-        '<foo foo="bar">bar</foo><foo a="1 3" b="4"></foo>';
+        '<foo foo="bar">bar</foo><foo a="1 3" b="4" />';
 };
 
 run_me;
