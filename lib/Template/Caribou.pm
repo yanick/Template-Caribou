@@ -119,41 +119,6 @@ method all_templates {
         grep { /^template / } $self->meta->get_method_list;
 }
 
-=method import_template( $name => $file )
-
-Imports the content of I<$file> as a template. If I<$name> is not given, 
-it is assumed to be the basename of the file, minus the extension. 
-
-Returns the name of the imported template.
-
-=cut
-
-sub import_template {
-    my $self = shift;
-
-    my( $name, $file ) = @_ == 2 ? @_ : ( undef, @_ );
-
-    $file = file($file);
-
-    ( $name = $file->basename ) =~ s/\..*?$// unless $name;
-
-    my $class = ref( $self ) || $self;
-
-    my $sub = eval <<"END_EVAL";
-package $class;
-use Method::Signatures;
-method {
-# line 1 "@{[ $file->absolute ]}"
-    @{[ $file->slurp ]}
-}
-END_EVAL
-
-    die $@ if $@;
-
-    $self->set_template( $name => $sub );
-
-    return $name;
-}
 
 =method import_template_dir( $directory )
 
