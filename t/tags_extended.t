@@ -13,25 +13,34 @@ with 'Template::Caribou';
 
 my $bou = Test->new;
 
-sub r(&) {
-    $bou->render(shift);
+sub render_ok(&$$) {
+    my ( $template, $expected, $title) = @_;
+    is $bou->render($template), $expected, $title;
 }
 
-is r { submit "foo", id => 'bar'; } 
+render_ok sub { submit "foo", id => 'bar'; } 
     => '<input id="bar" type="submit" value="foo" />', 'submit';
 
 
-is r { css "X" } 
+render_ok sub { css "X" } 
     => '<style type="text/css">X</style>', 'css';
 
-is r { anchor "http://foo.com" => 'linkie' }
+render_ok sub { anchor "http://foo.com" => 'linkie' }
     => '<a href="http://foo.com">linkie</a>', 'anchor';
 
-is r { anchor "http://foo.com" => sub {
+render_ok sub { anchor "http://foo.com" => sub {
     print ::RAW "this <b>thing</b>";
 } } => '<a href="http://foo.com">this <b>thing</b></a>', 'anchor';
 
-is r { image "/foo.jpg" } => '<img src="/foo.jpg" />', 'image';
+render_ok sub { image "/foo.jpg" } => '<img src="/foo.jpg" />', 'image';
 
-is r { markdown "this is *awesome*" } => "<p>this is <em>awesome</em></p>\n", 'markdown';
+render_ok sub { markdown "this is *awesome*" } => "<p>this is <em>awesome</em></p>\n", 'markdown';
+
+render_ok sub {
+    css_include 'foo/bar.css';
+}, '<link href="foo/bar.css" rel="stylesheet" />', 'css_include';
+
+render_ok sub {
+    css_include 'foo/bar.css', { media => 'screen' };
+}, '<link href="foo/bar.css" media="screen" rel="stylesheet" />', 'css_include with arguments';
 

@@ -67,7 +67,6 @@ sub import_template_file {
     ( $name = $file->basename ) =~ s/\..*?$// unless $name;
 
     my $class = ref( $self ) || $self;
-    warn $class;
 
     my $sub = eval <<"END_EVAL";
 package $class;
@@ -79,7 +78,6 @@ method {
 END_EVAL
 
     die $@ if $@;
-
     $self->set_template( $name => $sub );
     $self->set_template_file( $name => [ $file => $file->stat->mtime ] );
 

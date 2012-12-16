@@ -6,11 +6,13 @@ use warnings;
 
 use Carp;
 
+use Method::Signatures;
+
 use Template::Caribou::Tags ':all';
 
 use Sub::Exporter -setup => {
-    exports => [qw/ css anchor image markdown javascript js_include submit
-    less /],
+    exports => [qw/ css anchor image markdown javascript javascript_include submit
+    less css_include /],
     groups => { default => ':all' },
 };
 
@@ -68,7 +70,7 @@ sub javascript($) {
     });
 }
 
-=head2 js_include $url
+=head2 javascript_include $url
 
 Shortcut for 
 
@@ -76,7 +78,7 @@ Shortcut for
 
 =cut
 
-sub js_include($) {
+sub javascript_include($) {
     my $url = shift;
 
     render_tag( 'script', sub {
@@ -86,6 +88,20 @@ sub js_include($) {
     });
 }
 
+=head2 css_include
+<link href="public/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+        media="screen" />
+
+=cut
+
+func css_include( $url, \%args? = () ) {
+    render_tag( 'link', sub {
+        attr rel => 'stylesheet',
+             href => $url,
+             %args
+             ;
+    });
+}
 
 =head2 css $text
 
