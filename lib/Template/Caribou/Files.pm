@@ -10,44 +10,6 @@ use MooseX::SemiAffordanceAccessor;
 use Moose::Role;
 use List::Pairwise qw/ mapp /;
 
-has template_dirs => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    default => sub { [] },
-    trigger => \&load_template_dirs,
-);
-
-sub load_template_dirs {
-    my( $self ) = @_;
-
-    for my $dir ( map { dir($_) }  @{ $self->template_dirs } ) {
-        $dir->recurse( callback => sub{ 
-             return unless $_[0] =~ /\.bou$/;
-             my $f = $_[0]->relative($dir)->stringify;
-             $f =~ s/\.bou$//;
-             $self->import_template_file( $f => $_[0] );
-        });
-    }
-
-}
-
-
-sub BUILD {
-    my $self = shift;
-    $self->load_template_dirs;
-}
-
-has template_files => (
-    traits => [ 'Hash' ],
-    is => 'ro',
-    isa => 'HashRef',
-    default => sub { {} },
-    handles => {
-        set_template_file => 'set',
-        template_files_mapping => 'elements',
-    },
-);
-
 =method import_template_file( $name => $file )
 
 Imports the content of I<$file> as a template. If I<$name> is not given, 
@@ -79,23 +41,16 @@ END_EVAL
 
     die $@ if $@;
     $self->set_template( $name => $sub );
-    $self->set_template_file( $name => [ $file => $file->stat->mtime ] );
 
     return $name;
 }
 
-method refresh_template_dirs {
+method import_template_dirs ( @dirs ) {
 
-    my %seen = mapp { $b->[0] => $b->[1] } $self->template_files_mapping;
-
-    for my $dir ( map { dir($_) }  @{ $self->template_dirs } ) {
+    for my $dir ( map { dir($_) }  @dirs ) {
         $dir->recurse( callback => sub{ 
              return unless $_[0] =~ /\.bou$/;
-
-             return if $seen{"$_[0]"} >= $_[0]->stat->mtime;
-
              my $f = $_[0]->relative($dir)->stringify;
-
              $f =~ s/\.bou$//;
              $self->import_template_file( $f => $_[0] );
         });
@@ -103,8 +58,6 @@ method refresh_template_dirs {
 
 }
 
-method refresh_template_files {
-    $self->refresh_template_dirs;
-}
+
 
 1;
