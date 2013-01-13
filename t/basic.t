@@ -90,17 +90,17 @@ test attributes => sub {
 test "print vs  say" => sub {
     my $self = shift;
 
-    is $self->render(sub{
-        print "one";
-        say "two";
-        print ::RAW "three";
-        say ::RAW "four";
-    }) => "onetwo\nthreefour\n";
+    TODO: {
+        local $TODO = "Perl bug, should be fixed in 5.18";
+
+        is $self->render(sub{
+            print "one";
+            say "two";
+            print ::RAW "three";
+            say ::RAW "four";
+        }) => "onetwo\nthreefour\n";
+    }
 };
 
 run_me;
 done_testing;
-
-
-
-

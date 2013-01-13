@@ -11,6 +11,8 @@ use Template::Caribou::Tags::HTML qw/ :all /;
 
 with 'Template::Caribou';
 
-__PACKAGE__->import_template( 't/corpus/usecase_1.bou' );
+with 'Template::Caribou::Files' => {
+    dirs => [ 't/corpus' ],
+};
 
 1;

@@ -55,9 +55,6 @@ sub TIEHANDLE { return bless \my $i, shift; }
 sub PRINT { 
     shift;
     no warnings qw/ uninitialized /;
-    $DB::single = 1;
-    warn "@_";
-    warn "EOL is CR" if $\ eq "\n";
     $Template::Caribou::OUTPUT .= join '', @_, $\;
 } 
 

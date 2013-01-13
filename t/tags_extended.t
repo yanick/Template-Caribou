@@ -3,7 +3,7 @@ use warnings;
 
 package Test;
 
-use Test::More tests => 6;
+use Test::More tests => 8;
 
 use Template::Caribou::Tags::HTML::Extended ':all';
 
