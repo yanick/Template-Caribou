@@ -82,9 +82,9 @@ sub javascript_include($) {
     my $url = shift;
 
     render_tag( 'script', sub {
-        attr type => 'text/javascript',
-             src => $url;
-             print ::RAW ' ';  # to prevent collapsing the tag
+#        attr type => 'text/javascript',
+#             src => $url;
+#             print ::RAW ' ';  # to prevent collapsing the tag
     });
 }
 

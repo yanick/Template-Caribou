@@ -1,6 +1,8 @@
 use strict;
 use warnings;
 
+use 5.10.0;
+
 use Test::More;
 
 use Test::Routine;
@@ -83,6 +85,17 @@ test attributes => sub {
 
     is $self->render( 'attributes' ) => 
         '<foo foo="bar">bar</foo><foo a="1 3" b="4" />';
+};
+
+test "print vs  say" => sub {
+    my $self = shift;
+
+    is $self->render(sub{
+        print "one";
+        say "two";
+        print ::RAW "three";
+        say ::RAW "four";
+    }) => "onetwo\nthreefour\n";
 };
 
 run_me;
