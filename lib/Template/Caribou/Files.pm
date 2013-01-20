@@ -98,14 +98,20 @@ sub _import_template_file {
 
     my $class = ref( $self ) || $self;
 
-    my $sub = eval <<"END_EVAL";
+    my @lines = $file->slurp;
+
+    my $signature = $lines[0] =~ m{^#\((.*)\)\s*$} ? $1 : '';
+
+    my $code = <<"END_EVAL";
 package $class;
 use Method::Signatures;
-method {
+method ($signature) {
 # line 1 "@{[ $file->absolute ]}"
-    @{[ $file->slurp ]}
+@lines
 }
 END_EVAL
+
+    my $sub = eval $code;
 
     die $@ if $@;
     $self->set_template( $name => $sub );

@@ -12,9 +12,51 @@ use Template::Caribou::Tags ':all';
 
 use Sub::Exporter -setup => {
     exports => [qw/ css anchor image markdown javascript javascript_include submit
-    less css_include /],
+    less css_include doctype
+    favicon
+    /],
     groups => { default => ':all' },
 };
+
+=head2 doctype $type
+
+Prints the doctype declaration for the given type. 
+
+For the moment, only I<html 5> is supported as a type.
+
+=cut
+
+sub doctype($) {
+    my $type = shift;
+
+    if ( $type eq 'html 5' ) {
+        print ::RAW "<!DOCTYPE html>\n";
+        return;
+    }
+
+    die "type '$type' not supported";
+}
+
+=head2 favicon $url
+
+Generates the favicon tag.
+
+    favicon 'my_icon.png';
+
+will generates
+
+    <link rel="shortcut icon" href="my_icon.png" />
+
+=cut
+
+sub favicon($) {
+    my $url = shift;
+
+    render_tag( 'link', sub {
+            attr rel => 'shortcut icon',
+            href => $url
+    } );
+}
 
 =head2 submit $value, %attr
 
@@ -82,9 +124,9 @@ sub javascript_include($) {
     my $url = shift;
 
     render_tag( 'script', sub {
-#        attr type => 'text/javascript',
-#             src => $url;
-#             print ::RAW ' ';  # to prevent collapsing the tag
+        attr type => 'text/javascript',
+             src => $url;
+             print ::RAW ' ';  # to prevent collapsing the tag
     });
 }
 
@@ -169,6 +211,8 @@ Uses L<Text::MultiMarkdown>.
 
 sub markdown($){
     require Text::MultiMarkdown;
+
+    return unless length $_[0];
 
     print ::RAW Text::MultiMarkdown::markdown(shift);
 }

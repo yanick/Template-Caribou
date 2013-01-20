@@ -9,7 +9,7 @@ BEGIN {
     @Template::Caribou::Tags::HTML::TAGS =  qw/
         p html head h1 h2 h3 h4 h5 h6 body emphasis div
         style title span li ol ul i b bold a form input
-        label
+        label link img section article
     /;
 }
 

@@ -109,7 +109,9 @@ method set_template($name,$value) {
 }
 
 method t($name) {
-    return $self->meta->get_method( "template $name" )->body;
+    my $method = $self->meta->get_method( "template $name" )
+        or die "template '$name' not found\n";
+    return $method->body;
 }
 
 method all_templates {
