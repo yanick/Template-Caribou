@@ -3,7 +3,7 @@ use warnings;
 
 package Test;
 
-use Test::More tests => 8;
+use Test::More tests => 1;
 
 use Template::Caribou::Tags::Bootstrap
     row => { -as => 'main' };
@@ -20,5 +20,5 @@ sub render_ok(&$$) {
 }
 
 render_ok sub { main { }; } 
-    => '', 'row';
+    => '<div class=" row" />', 'row';
 
