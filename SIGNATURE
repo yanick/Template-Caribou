@@ -1,0 +1,68 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.68.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+SHA1 252dbe4639500be1eab9cceee56e6173580cb812 AUTHOR_PLEDGE
+SHA1 d38bfacfc308c5ff73ca5be6eecba937bab184ad Build.PL
+SHA1 237fb63b0de82471b782cd0f2d32e7caed10ffb5 Changes
+SHA1 f64bdc6d31def9684cb94cf4c6561c3d40b36aa5 INSTALL
+SHA1 cf5dc9c929415cfa7133eed863def866ade9774d LICENSE
+SHA1 960dec304842698582b28357224fe6a1f905a7ec MANIFEST
+SHA1 efe65f5f74e5e073c31c213cef2ef481be7debb8 MANIFEST.SKIP
+SHA1 a8482b3d8637678f2e005ca3bb506032f723f700 META.json
+SHA1 440d8094234e1c9cde60d544de9f0659ad6cbc8e META.yml
+SHA1 299886e245b4be706a60e3006d9f77e984f4b6eb README
+SHA1 ffd0f4c32e1c0a516a063ae8d4370ea3376a1dc3 README.mkdn
+SHA1 e3f4458593507713964c95e0747eb4423af5500b examples/basic.pl
+SHA1 dc3c50fa211b08e0073bce6195508856f4803a76 examples/lib/HelloWorld.pm
+SHA1 b15c1f6115e634af3825ba0bd2d60c89cc069ef5 examples/lib/MyTags.pm
+SHA1 bdfd18294ab25c4a7127b0ea022de69cb07edba7 examples/lib/MyWebPage.pm
+SHA1 2c585345265c1b776f270683ebde2451ef1c01dc examples/lib/SnipMate/Index.pm
+SHA1 7f062dc1b6e5fe19fd9f37c8519aab3d0eed8ae8 examples/lib/SnipMate/Snippets.pm
+SHA1 817ced2b04a8b8b4d61d9c0c90ce38f108979507 examples/simple.pl
+SHA1 a6e1ad1eb26a416202ad655de2f6741e7cfde3fe examples/snipmate_cheatsheet.pl
+SHA1 e4288ae47681299b2a5bc62774dc80ff2bf232ec examples/snipmate_index.pl
+SHA1 ea3746b383681d340188f461ff3bb431ab08826c lib/Template/Caribou.pm
+SHA1 08f9d6e241746fb237eaff35f8eb61c87a9aa85a lib/Template/Caribou/Files.pm
+SHA1 39cbf226a11066144d003fa5eb9a98538d16153f lib/Template/Caribou/Formatter.pm
+SHA1 146fc07547a37e893630a07ec3dc83794dbf95b4 lib/Template/Caribou/Formatter/Twig.pm
+SHA1 a99f0a31b54c3c712e5c215354908dc4b424e0ef lib/Template/Caribou/Manual.pod
+SHA1 9c3e6ca5114379662285c3cb6a74c86fbb161311 lib/Template/Caribou/Tags.pm
+SHA1 72ffaecde767cc835bc3d1ae006d4c4e3f722d0a lib/Template/Caribou/Tags/Bootstrap.pm
+SHA1 14d3ad8f028ac531908a2bfdfb933dd412e112b1 lib/Template/Caribou/Tags/HTML.pm
+SHA1 54aa219c4c621ee39c358891425cb2819a9419fd lib/Template/Caribou/Tags/HTML/Extended.pm
+SHA1 ff4eb8c5e0e85b429831643de44586ca451ec905 lib/Template/Caribou/Utils.pm
+SHA1 3cbe905b92fbc69d59a06031d5ce6c837b352aa2 t/00-compile.t
+SHA1 9ff93213325137fcb0951a7d9fc3850873040cf7 t/000-report-versions-tiny.t
+SHA1 4ed4460e2de35f9a5f9b8ddb8a10e3a30b30ec82 t/basic.t
+SHA1 019e2cdbbee4dbfa22fac415c978135dd9ee265a t/corpus/usecase_1.bou
+SHA1 1aefe8c5826d05a6684b96dd00125abdbe34dc2d t/corpus/usecase_2/body.bou
+SHA1 eac17193fb09ca62ac09c12897931f41ed9bf5dc t/corpus/usecase_2/head.bou
+SHA1 2e0938aa8f9a66d28d9a4d9bbe7b4ee559597814 t/corpus/usecase_2/page.bou
+SHA1 f59c47dc00703390550ed8dc7049fcf68edc1cca t/lib/UseCase/One.pm
+SHA1 a0f166c8959a84367a5917cf512e06c9ad39a368 t/lib/UseCase/Two.pm
+SHA1 e3ba4241602920c553f40ce7e8d934f5138c4c25 t/render.t
+SHA1 a20d5a9ead0466ae4b528a7229e43c7330280dec t/tags-bootstrap.t
+SHA1 f431a9083c83dd34f239d5f3c7f5a294dfe707a2 t/tags_extended.t
+SHA1 aba4c4731809fc539831d8d9be476ba4d7967ca2 t/usecase_1.t
+SHA1 19a33e3263525273a2f3b7564659a0768cbd60a3 t/usecase_2.t
+SHA1 ec3f84bfd7a9ce3246e7592f4134100c6b5ce02b xt/release/unused-vars.t
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iEYEARECAAYFAlEn0w0ACgkQ34Hwf+GwC4wThwCgkDFj3+exxppAC08gFqQDawyp
+gawAoL/7f59THSuN1ggetb5iVq0+oiIJ
+=AeIZ
+-----END PGP SIGNATURE-----

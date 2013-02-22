@@ -1,13 +1,12 @@
 Revision history for Template-Caribou
 
-{{$NEXT}}
- [API CHANGES]
-
- [BUG FIXES]
-
+0.2.0 2013-02-22
  [ENHANCEMENTS]
  - Adding documentation
  - Lots of misc work
+
+ [STATISTICS]
+ - code churn: 32 files changed, 2137 insertions(+), 103 deletions(-)
 
 0.1.0 2012-02-05
  [ENHANCEMENTS]
