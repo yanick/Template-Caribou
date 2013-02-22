@@ -20,14 +20,13 @@ sub _row_tag {
 
 
     my $groom = sub {
-        my( $attr, $inner ) = @_;
+        my( $attr ) = @_;
         $attr->{class} .= ' row';
         $attr->{class} .= '-fluid' if $arg->{fluid};
     };
 
     return sub(&) {
-        my $inner = shift;
-        render_tag( 'div', $inner, $groom );
+        render_tag( 'div', shift, $groom );
     }
 }
 
@@ -35,14 +34,13 @@ sub _span_tag {
     my( undef, undef, $arg ) = @_;
 
     my $groom = sub {
-        my( $attr, $inner ) = @_;
+        my( $attr ) = @_;
         $attr->{class} .= ' span' . $arg->{span} || 1;
         $attr->{class} .= ' offset' . $arg->{offset} if $arg->{offset};
     };
 
     return sub(&) {
-        my $inner = shift;
-        render_tag( 'div', $inner, $groom );
+        render_tag( 'div', shift, $groom );
     }
 }
 

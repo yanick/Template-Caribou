@@ -17,12 +17,10 @@ use Sub::Exporter -setup => {
 };
 
 sub _gen_generic_tag {
-    my ( undef, $name, $arg ) = @_;
-
-    my $c = $arg->{class};
+    my ( undef, undef, $arg ) = @_;
 
     my $groom = $arg->{groom} || sub {
-        my( $attr, $inner ) = @_;
+        my( $attr ) = @_;
         $attr->{class} ||= $arg->{class} if $arg->{class};
         if ( $arg->{attr} ) {
             $attr->{$_} ||= $arg->{attr}{$_} for keys %{ $arg->{attr} };
