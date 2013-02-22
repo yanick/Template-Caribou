@@ -98,16 +98,16 @@ sub _import_template_file {
 
     my $class = ref( $self ) || $self;
 
-    my @lines = $file->slurp;
+    my $lines = $file->slurp;
 
-    my $signature = $lines[0] =~ m{^#\((.*)\)\s*$} ? $1 : '';
+    my $signature = $lines =~ m{^#\((.*)\)\s*$}m ? $1 : '';
 
     my $code = <<"END_EVAL";
 package $class;
 use Method::Signatures;
 method ($signature) {
 # line 1 "@{[ $file->absolute ]}"
-@lines
+$lines
 }
 END_EVAL
 
