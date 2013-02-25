@@ -109,8 +109,6 @@ has formatter => (
 );
 
 method set_template($name,$value) {
-    warn $self;
-    warn $self->meta;
     $self->meta->add_method( "template $name" => $value );
 }
 
