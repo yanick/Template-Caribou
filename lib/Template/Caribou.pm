@@ -109,11 +109,13 @@ has formatter => (
 );
 
 method set_template($name,$value) {
+    warn $self;
+    warn $self->meta;
     $self->meta->add_method( "template $name" => $value );
 }
 
 method t($name) {
-    my $method = $self->meta->get_method( "template $name" )
+    my $method = $self->meta->find_method_by_name( "template $name" )
         or die "template '$name' not found\n";
     return $method->body;
 }
