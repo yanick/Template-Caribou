@@ -1,7 +1,11 @@
 use strict;
 use warnings;
 
+use autodie;
+
 use Test::More tests => 1;
+
+-d $_ or mkdir $_ for map "t/$_", qw/ foo bar /;
 
 { 
     package Bar;
@@ -10,7 +14,7 @@ use Test::More tests => 1;
     use Template::Caribou;
 
     with 'Template::Caribou::Files' => {
-        dirs => [ 'bar' ],
+        dirs => [ 't/bar' ],
     };
 }
 
@@ -20,14 +24,14 @@ use Test::More tests => 1;
     use Moose;
     use Template::Caribou;
     with 'Template::Caribou::Files' => {
-        dirs => [ 'foo' ],
+        dirs => [ 't/foo' ],
     };
     with 'Bar';
 }
 
 my $foo = Foo->new;
 
-is_deeply [ $foo->all_template_dirs ], [ qw/ foo bar / ], 'all_template_dirs';
+is_deeply [ $foo->all_template_dirs ], [ map "t/$_", qw/ foo bar / ], 'all_template_dirs';
 
 
 
