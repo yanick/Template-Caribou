@@ -178,8 +178,6 @@ sub render {
     $output = Template::Caribou::String->new( $output ) 
         if $Template::Caribou::IN_RENDER;
 
-    $DB::single = 1;
-
     print ::RAW $output if $Template::Caribou::IN_RENDER and not defined wantarray;
 
     if( !$Template::Caribou::IN_RENDER and $self->has_formatter ) {

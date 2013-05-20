@@ -66,8 +66,6 @@ sub render_tag {
         tie *STDOUT, 'Template::Caribou::Output';
         tie *::RAW, 'Template::Caribou::OutputRaw';
 
-        $DB::single = 1;
-
         my $res = ref $inner_sub ? $inner_sub->() : $inner_sub;
 
         $inner = $Template::Caribou::OUTPUT 
@@ -84,7 +82,6 @@ sub render_tag {
         $attrs .= qq{ $_="$attr{$_}"};
     }
 
-    $DB::single = 1;
     no warnings qw/ uninitialized /;
     my $output = $inner 
         ? Template::Caribou::String->new( "<${tag}$attrs>$inner</$tag>" ) 

@@ -36,6 +36,7 @@ t/corpus/usecase_1.bou
 t/corpus/usecase_2/body.bou
 t/corpus/usecase_2/head.bou
 t/corpus/usecase_2/page.bou
+t/inheritence.t
 t/lib/UseCase/One.pm
 t/lib/UseCase/Two.pm
 t/render.t
