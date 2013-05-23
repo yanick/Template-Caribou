@@ -4,6 +4,7 @@ Revision history for Template-Caribou
  [API CHANGES]
 
  [BUG FIXES]
+ - Test fake module 'Bar' was picked up as a dependency.
 
  [DOCUMENTATION]
 
