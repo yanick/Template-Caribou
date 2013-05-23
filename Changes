@@ -4,7 +4,6 @@ Revision history for Template-Caribou
  [API CHANGES]
 
  [BUG FIXES]
- - Test fake module 'Bar' was picked up as a dependency.
 
  [DOCUMENTATION]
 
@@ -13,6 +12,13 @@ Revision history for Template-Caribou
  [NEW FEATURES]
 
  [STATISTICS]
+
+0.2.2 2013-05-22
+ [BUG FIXES]
+ - Test fake module 'Bar' was picked up as a dependency.
+
+ [STATISTICS]
+ - code churn: 2 files changed, 18 insertions(+), 2 deletions(-)
 
 0.2.1 2013-05-20
  [BUG FIXES]
