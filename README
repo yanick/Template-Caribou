@@ -1,0 +1,82 @@
+NAME
+    Template::Caribou - class-based HTML-centric templating system
+
+VERSION
+    version 0.2.2
+
+SYNOPSIS
+        package MyTemplate;
+
+        use Moose;
+        use Template::Caribou;
+
+        with 'Template::Caribou';
+
+        use Template::Caribou::Tags::HTML qw/ :all /;
+
+        has name => ( is => 'ro' );
+
+        template page => sub {
+            html { 
+                head { title { 'Example' } };
+                show( 'body' );
+            }
+        };
+
+        template body => sub {
+            my $self = shift;
+
+            body { 
+                h1 { 'howdie ' . $self->name } 
+            }
+        };
+
+        package main;
+
+        my $template = MyTemplate->new( name => 'Yanick' );
+        print $template->render('page');
+
+DESCRIPTION
+    WARNING: Codebase is alpha with extreme prejudice. Assume that bugs are
+    teeming and that the API is subject to change.
+
+    Template::Caribou is a Moose-based, class-centric templating system
+    mostly aimed at producing sgml-like outputs, mostly HTML, but also XML,
+    SVG, etc. It is heavily inspired by Template::Declare.
+
+    For a manual on how to use "Template::Caribou", have a peek at
+    Template::Caribou::Manual.
+
+METHODS
+  pretty_render()
+    Returns true if rendered templates are passed through the prettifier.
+
+  enable_pretty_render( $bool )
+    if set to true, rendered templates will be filtered by a prettifier
+    before being returned by the "render()" method.
+
+  import_template_dir( $directory )
+    Imports all the files with a ".bou" extension in *$directory* as
+    templates (non-recursively).
+
+    Returns the name of the imported templates.
+
+  show( $template, @args )
+    Outside of a template, behaves like "render()". In a template, prints
+    out the result of the rendering in addition of returning it.
+
+SEE ALSO
+    <http://babyl.dyndns.org/techblog/entry/caribou> - The original blog
+    entry introducing Template::Caribou.
+
+    Template::Declare
+
+AUTHOR
+    Yanick Champoux <yanick@cpan.org>
+
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2013 by Yanick Champoux.
+
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
+
