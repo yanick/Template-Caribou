@@ -167,6 +167,7 @@ sub render {
         local %Template::Caribou::attr;
         tie *STDOUT, 'Template::Caribou::Output';
         tie *::RAW, 'Template::Caribou::OutputRaw';
+        select STDOUT;
         my $res = $method->( $self, @args );
 
         $Template::Caribou::OUTPUT 

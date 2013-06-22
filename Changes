@@ -4,6 +4,7 @@ Revision history for Template-Caribou
  [API CHANGES]
 
  [BUG FIXES]
+ - Add 'select' statement so that 'print' always means 'print STDOUT';
 
  [DOCUMENTATION]
 
