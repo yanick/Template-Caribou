@@ -1,52 +1,12 @@
 package Template::Caribou;
+BEGIN {
+  $Template::Caribou::AUTHORITY = 'cpan:YANICK';
+}
+{
+  $Template::Caribou::VERSION = '0.2.3';
+}
 # ABSTRACT: class-based HTML-centric templating system
 
-=head1 SYNOPSIS
-
-    package MyTemplate;
-
-    use Moose;
-    use Template::Caribou;
-
-    with 'Template::Caribou';
-
-    use Template::Caribou::Tags::HTML qw/ :all /;
-
-    has name => ( is => 'ro' );
-
-    template page => sub {
-        html { 
-            head { title { 'Example' } };
-            show( 'body' );
-        }
-    };
-
-    template body => sub {
-        my $self = shift;
-
-        body { 
-            h1 { 'howdie ' . $self->name } 
-        }
-    };
-
-    package main;
-
-    my $template = MyTemplate->new( name => 'Yanick' );
-    print $template->render('page');
-
-=head1 DESCRIPTION
-
-WARNING: Codebase is alpha with extreme prejudice. Assume that bugs are
-teeming and that the API is subject to change.
-
-L<Template::Caribou> is a L<Moose>-based, class-centric templating system
-mostly aimed at producing sgml-like outputs, mostly HTML, but also XML, SVG, etc. It is
-heavily inspired by L<Template::Declare>.
-
-For a manual on how to use C<Template::Caribou>, have a peek at
-L<Template::Caribou::Manual>.
-
-=cut
 
 use strict;
 use warnings;
@@ -73,16 +33,6 @@ func template( $name, $code ) {
 }
 
 
-=method pretty_render()
-
-Returns true if rendered templates are passed through the prettifier.
-
-=method enable_pretty_render( $bool )
-
-if set to true, rendered templates will be filtered by a prettifier 
-before being returned by the C<render()> method.
-
-=cut
 
 use Moose::Util::TypeConstraints;
 
@@ -126,14 +76,6 @@ method all_templates {
 }
 
 
-=method import_template_dir( $directory )
-
-Imports all the files with a C<.bou> extension in I<$directory>
-as templates (non-recursively).  
-
-Returns the name of the imported templates.
-
-=cut
 
 method import_template_dir($directory) {
 
@@ -188,12 +130,6 @@ sub render {
     return $output;
 }
 
-=method show( $template, @args )
-
-Outside of a template, behaves like C<render()>. In a template, prints out
-the result of the rendering in addition of returning it.
-
-=cut
 
 sub show {
     croak "'show()' must be called from within a template"
@@ -204,6 +140,86 @@ sub show {
 
 1;
 
+__END__
+
+=pod
+
+=head1 NAME
+
+Template::Caribou - class-based HTML-centric templating system
+
+=head1 VERSION
+
+version 0.2.3
+
+=head1 SYNOPSIS
+
+    package MyTemplate;
+
+    use Moose;
+    use Template::Caribou;
+
+    with 'Template::Caribou';
+
+    use Template::Caribou::Tags::HTML qw/ :all /;
+
+    has name => ( is => 'ro' );
+
+    template page => sub {
+        html { 
+            head { title { 'Example' } };
+            show( 'body' );
+        }
+    };
+
+    template body => sub {
+        my $self = shift;
+
+        body { 
+            h1 { 'howdie ' . $self->name } 
+        }
+    };
+
+    package main;
+
+    my $template = MyTemplate->new( name => 'Yanick' );
+    print $template->render('page');
+
+=head1 DESCRIPTION
+
+WARNING: Codebase is alpha with extreme prejudice. Assume that bugs are
+teeming and that the API is subject to change.
+
+L<Template::Caribou> is a L<Moose>-based, class-centric templating system
+mostly aimed at producing sgml-like outputs, mostly HTML, but also XML, SVG, etc. It is
+heavily inspired by L<Template::Declare>.
+
+For a manual on how to use C<Template::Caribou>, have a peek at
+L<Template::Caribou::Manual>.
+
+=head1 METHODS
+
+=head2 pretty_render()
+
+Returns true if rendered templates are passed through the prettifier.
+
+=head2 enable_pretty_render( $bool )
+
+if set to true, rendered templates will be filtered by a prettifier 
+before being returned by the C<render()> method.
+
+=head2 import_template_dir( $directory )
+
+Imports all the files with a C<.bou> extension in I<$directory>
+as templates (non-recursively).  
+
+Returns the name of the imported templates.
+
+=head2 show( $template, @args )
+
+Outside of a template, behaves like C<render()>. In a template, prints out
+the result of the rendering in addition of returning it.
+
 =head1 SEE ALSO
 
 L<http://babyl.dyndns.org/techblog/entry/caribou>  - The original blog entry
@@ -211,6 +227,15 @@ introducing L<Template::Caribou>.
 
 L<Template::Declare>
 
+=head1 AUTHOR
+
+Yanick Champoux <yanick@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by Yanick Champoux.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 =cut
-
-

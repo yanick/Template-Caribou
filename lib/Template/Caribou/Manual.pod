@@ -1,6 +1,32 @@
 package Template::Caribou::Manual;
 # ABSTRACT: User Guide to Template::Caribou
 
+
+'end of Template::Caribou::Manual';
+
+__END__
+
+=pod
+
+=head1 NAME
+
+Template::Caribou::Manual - User Guide to Template::Caribou
+
+=head1 VERSION
+
+version 0.2.3
+
+=head1 DESCRIPTION
+
+This manpage describes how to use the C<Caribou> templating system. For the
+documentation of the role itself, refer to the L<Template::Caribou> manpage
+itself.
+
+The C<Caribou> system is made of two major components: the templating role
+itself (L<Template::Caribou>) and the tag libraries,
+(L<Template::Caribou::Tags>, L<Template::Caribou::Tags>,
+L<Template::Caribou::Tags::HTML::Extended>, etc). 
+
 =SYNOPSIS
 
     package MyTemplate;
@@ -33,18 +59,6 @@ package Template::Caribou::Manual;
 
     my $template = MyTemplate->new( name => 'Yanick' );
     print $template->render('page');
-    
-
-=head1 DESCRIPTION
-
-This manpage describes how to use the C<Caribou> templating system. For the
-documentation of the role itself, refer to the L<Template::Caribou> manpage
-itself.
-
-The C<Caribou> system is made of two major components: the templating role
-itself (L<Template::Caribou>) and the tag libraries,
-(L<Template::Caribou::Tags>, L<Template::Caribou::Tags>,
-L<Template::Caribou::Tags::HTML::Extended>, etc). 
 
 =head1 THE C<Template::Caribou> ROLE
 
@@ -226,7 +240,6 @@ Tags, of course, can be used within one another:
         };
     };
 
-
 Attributes for the tag are set via the 'attr()' function, which can
 appear anywhere within the inner template.
 
@@ -319,7 +332,6 @@ it provides C<anchor>, which is a stream-lined C<a>:
     a { attr href => 'http://bar.com'; 
         b { "the other site" }; 
     };
-    
 
 =head1 OTHER PIECES
 
@@ -328,6 +340,15 @@ have one file for each individual template. L<Template::Caribou::Files>
 is there just for that. This role can be given directories where it'll 
 locate individual templates and incorporate them in the main class.
 
-=cut
+=head1 AUTHOR
 
-'end of Template::Caribou::Manual';
+Yanick Champoux <yanick@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by Yanick Champoux.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
