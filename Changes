@@ -4,7 +4,6 @@ Revision history for Template-Caribou
  [API CHANGES]
 
  [BUG FIXES]
- - Add 'select' statement so that 'print' always means 'print STDOUT';
 
  [DOCUMENTATION]
 
@@ -13,6 +12,13 @@ Revision history for Template-Caribou
  [NEW FEATURES]
 
  [STATISTICS]
+
+0.2.3 2013-06-22
+ [BUG FIXES]
+ - Add 'select' statement so that 'print' always means 'print STDOUT';
+
+ [STATISTICS]
+ - code churn: 2 files changed, 9 insertions(+), 1 deletion(-)
 
 0.2.2 2013-05-22
  [BUG FIXES]
