@@ -4,7 +4,6 @@ Revision history for Template-Caribou
  [API CHANGES]
 
  [BUG FIXES]
- - Add explicit dependency to Data::Alias. (GH#1, reported by jscook)
 
  [DOCUMENTATION]
 
@@ -13,6 +12,13 @@ Revision history for Template-Caribou
  [NEW FEATURES]
 
  [STATISTICS]
+
+0.2.4 2014-06-02
+ [BUG FIXES]
+ - Add explicit dependency to Data::Alias. (GH#1, reported by jscook)
+
+ [STATISTICS]
+ - code churn: 2 files changed, 13 insertions(+), 2 deletions(-)
 
 0.2.3 2013-06-22
  [BUG FIXES]
