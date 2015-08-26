@@ -3,6 +3,9 @@ Revision history for Template-Caribou
 {{$NEXT}}
  [API CHANGES]
 
+ [MISC]
+ - Switch from using Method::Signatures to perl 5.20's 'signatures'.
+
  [BUG FIXES]
 
  [DOCUMENTATION]
