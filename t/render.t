@@ -8,8 +8,6 @@ use Test::Routine::Util;
 
 use Template::Caribou::Utils;
 
-use Method::Signatures;
-
 with 'Template::Caribou';
 
 use Template::Caribou::Tags 
@@ -17,16 +15,20 @@ use Template::Caribou::Tags
     mytag => { name => 'bar', -as => 'bar' },
 ;
 
-test string => method {
+test string => sub {
+    my $self = shift;
+    
     is $self->render(sub { 'hi there' }) => 'hi there';
 };
 
-test one_tag => method {
+test one_tag => sub {
+    my $self = shift;
     is $self->render(sub { foo { } }) => '<foo />';
     is $self->render(sub { foo { 'moin' } }) => '<foo>moin</foo>';
 };
 
-test two_tags => method {
+test two_tags => sub {
+    my $self = shift;
     is $self->render(sub { foo { bar { 'yay' } } }) => "<foo><bar>yay</bar></foo>";
 };
 

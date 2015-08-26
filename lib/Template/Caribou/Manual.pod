@@ -114,10 +114,12 @@ Templates are passed the object, as well as any additional arguments.
     # prints 'Howdie Yanick'
 
 While it's not necessary, I personally like to define the templates with
-L<Method::Signatures>, which makes things a little cleaner:
+Perl's new signatures, which makes things a little cleaner:
 
    # equivalent to code above
-    template 'greetings' => method($name) {
+   use experimental 'signatures';
+
+   template 'greetings' => sub($self, $name) {
         "Howdie " . $name;
     };
 
@@ -130,7 +132,7 @@ C<render()> can often be modified to be attributes.
        required => 1,
    );
 
-   template 'greetings' => method {
+   template 'greetings' => sub($self) {
         "Howdie " . $self->name;
    };
 
@@ -158,7 +160,7 @@ resulting syntax looks a little clunky:
     template head => sub { '<head>..</head>' };
     template head => sub { '<body>..</body>' };
 
-    template page => method {
+    template page => sub($self) {
         print ::RAW $self->render( 'head' );
         print ::RAW $self->render( 'body' );
     };
@@ -170,7 +172,7 @@ Hence C<show()>, which provides a shortcut for the same behavior:
     template head => sub { '<head>..</head>' };
     template head => sub { '<body>..</body>' };
 
-    template page => method {
+    template page => sub($self) {
         show('head');
         show('body');
     };

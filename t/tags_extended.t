@@ -41,6 +41,6 @@ render_ok sub {
 }, '<link href="foo/bar.css" rel="stylesheet" />', 'css_include';
 
 render_ok sub {
-    css_include 'foo/bar.css', { media => 'screen' };
+    css_include 'foo/bar.css', media => 'screen';
 }, '<link href="foo/bar.css" media="screen" rel="stylesheet" />', 'css_include with arguments';
 

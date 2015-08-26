@@ -93,7 +93,7 @@ role {
     };
 
     before 'render' => sub {
-        $_[0]->import_template_dirs( @{$p->dirs} ) #@{ $_[0]->template_dirs } ) 
+        $_[0]->_import_template_dirs( @{$p->dirs} ) #@{ $_[0]->template_dirs } ) 
             if not $Template::Caribou::IN_RENDER;
     } if $p->auto_reload;
 
@@ -105,8 +105,6 @@ it is assumed to be the basename of the file, minus the extension.
 Returns the name of the imported template.
 
 =cut
-
-method import_template_file => \&_import_template_file;
 
 sub _import_template_file {
     my $self = shift;
@@ -125,8 +123,8 @@ sub _import_template_file {
 
     my $code = <<"END_EVAL";
 package $class;
-use Method::Signatures;
-method ($signature) {
+use experimental 'signatures';
+sub (\$self,$signature) {
 # line 1 "@{[ $file->absolute ]}"
 $lines
 }
@@ -139,8 +137,6 @@ END_EVAL
 
     return $name;
 }
-
-method import_template_dirs => \&_import_template_dirs; 
 
 sub _import_template_dirs {
     my ( $self, @dirs ) = @_;

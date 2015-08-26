@@ -58,16 +58,18 @@ use MooseX::SemiAffordanceAccessor;
 use MooseX::ClassAttribute;
 use Template::Caribou::Utils;
 use Path::Class qw/ file dir /;
-use Method::Signatures;
 
 use Template::Caribou::Tags;
 use Moose::Exporter;
+use Moose::Util::TypeConstraints;
+
+use experimental 'signatures';
 
 Moose::Exporter->setup_import_methods(
     as_is => [ 'template', 'attr', 'show' ],
 );
 
-func template( $name, $code ) {
+sub template( $name, $code ) {
     my $class = caller(0);
     $class->set_template( $name => $code );
 }
@@ -84,7 +86,6 @@ before being returned by the C<render()> method.
 
 =cut
 
-use Moose::Util::TypeConstraints;
 
 role_type 'Formatter', { 
     role => 'Template::Caribou::Formatter' 
@@ -108,17 +109,17 @@ has formatter => (
     coerce => 1,
 );
 
-method set_template($name,$value) {
+sub set_template($self,$name,$value) {
     $self->meta->add_method( "template $name" => $value );
 }
 
-method t($name) {
+sub t($self,$name) {
     my $method = $self->meta->find_method_by_name( "template $name" )
         or die "template '$name' not found\n";
     return $method->body;
 }
 
-method all_templates {
+sub all_templates($self) {
     return 
         sort
         map { /\s(.*)/ }
@@ -135,7 +136,7 @@ Returns the name of the imported templates.
 
 =cut
 
-method import_template_dir($directory) {
+sub import_template_dir($self,$directory) {
 
    $directory = dir( $directory );
 

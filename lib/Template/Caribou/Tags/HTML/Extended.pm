@@ -6,9 +6,9 @@ use warnings;
 
 use Carp;
 
-use Method::Signatures;
-
 use Template::Caribou::Tags ':all';
+
+use experimental 'signatures';
 
 use Sub::Exporter -setup => {
     exports => [qw/ css anchor image markdown javascript javascript_include submit
@@ -136,7 +136,7 @@ sub javascript_include($) {
 
 =cut
 
-func css_include( $url, \%args? = () ) {
+sub css_include( $url, %args ) {
     render_tag( 'link', sub {
         attr rel => 'stylesheet',
              href => $url,
@@ -176,8 +176,7 @@ is equivalent to
 
 =cut
 
-sub anchor($$) {
-    my ( $href, $inner ) = @_;
+sub anchor($href,$inner) {
     render_tag( 'a', $inner, sub {
         $_[0]->{href} ||= $href;
     });
@@ -189,8 +188,7 @@ Shortcut for <img>.
 
 =cut
 
-sub image(@) {
-    my ( $src, %attr ) = @_;
+sub image($src,%attr) {
 
     croak "src required" unless $src;
 
