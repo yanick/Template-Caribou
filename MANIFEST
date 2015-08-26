@@ -1,5 +1,4 @@
 AUTHOR_PLEDGE
-Build.PL
 Changes
 INSTALL
 LICENSE
@@ -7,9 +6,12 @@ MANIFEST
 MANIFEST.SKIP
 META.json
 META.yml
+Makefile.PL
 README
 README.mkdn
 SIGNATURE
+cpanfile
+doap.xml
 examples/basic.pl
 examples/lib/HelloWorld.pm
 examples/lib/MyTags.pm
@@ -30,7 +32,8 @@ lib/Template/Caribou/Tags/HTML.pm
 lib/Template/Caribou/Tags/HTML/Extended.pm
 lib/Template/Caribou/Utils.pm
 t/00-compile.t
-t/000-report-versions-tiny.t
+t/00-report-prereqs.dd
+t/00-report-prereqs.t
 t/basic.t
 t/corpus/usecase_1.bou
 t/corpus/usecase_2/body.bou
