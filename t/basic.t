@@ -23,7 +23,7 @@ template outer => sub {
     print 'x';
 };
 
-test 'inner' => sub {
+test 'inner template' => sub {
     my $self = shift;
 
     is $self->render('inner') => 'hello world';
