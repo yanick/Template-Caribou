@@ -14,7 +14,7 @@ use experimental 'signatures';
 use Template::Caribou::Tags::Bootstrap
    row => { -as => 'main' };
 
-with 'Template::Caribou';
+use Template::Caribou;
 
 sub render_ok( $template, $expected, $title ) {
     state $self = __PACKAGE__->new;

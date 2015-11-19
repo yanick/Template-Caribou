@@ -4,16 +4,21 @@ use strict;
 use warnings;
 no warnings qw/ uninitialized /;
 
-use Carp;
-
-use Moose;
-
 BEGIN {
     *::RAW = *::STDOUT;
 }
 
 
-__PACKAGE__->meta->make_immutable;
+use parent 'Exporter::Tiny';
+
+use Template::Caribou::Tags qw/ attr /;
+
+our @EXPORT = qw/ template attr /;
+
+sub template {
+    my $class = eval { $_[0]->DOES('Template::Caribou') } ? shift : caller;
+    $class->set_template( @_ );
+}
 
 package
     Template::Caribou::String;

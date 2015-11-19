@@ -5,13 +5,10 @@ use 5.10.0;
 
 use Test::More;
 
-use Test::Routine;
-use Test::Routine::Util;
-
 use Template::Caribou;
 use Template::Caribou::Tags qw/ render_tag /;
 
-with 'Template::Caribou';
+my $self = __PACKAGE__->new;
 
 template inner_tmpl => sub {
     'hello world';
@@ -23,15 +20,13 @@ template outer => sub {
     print 'x';
 };
 
-test 'inner_tmpl' => sub {
+subtest 'inner_tmpl' => sub {
     my $self = shift;
 
     is $self->render('inner_tmpl') => 'hello world';
 };
 
-test 'outer' => sub {
-    my $self = shift;
-
+subtest 'outer' => sub {
     is $self->render('outer') => 'xhello worldx';
 };
 
@@ -50,12 +45,9 @@ template 'escape_inner' => sub {
     bar { '<yay>' };
 };
 
-test 'escaping' => sub {
-    my $self = shift;
-
+subtest 'escaping' => sub {
     is $self->render('escape_outer') 
         => qq{<foo /><foo><bar>&lt;yay></bar></foo><foo />};
-
 };
 
 template 'end_show' => sub {
@@ -63,9 +55,7 @@ template 'end_show' => sub {
     show( 'inner_tmpl' );
 };
 
-test 'end_show' => sub {
-    my $self = shift;
-
+subtest 'end_show' => sub {
     is $self->render( 'end_show' ) => '<foo />hello world';
 };
 
@@ -80,16 +70,12 @@ template 'attributes' => sub {
     }
 };
 
-test attributes => sub {
-    my $self = shift;
-
+subtest attributes => sub {
     is $self->render( 'attributes' ) => 
         '<foo foo="bar">bar</foo><foo a="1 3" b="4" />';
 };
 
-test "print vs  say" => sub {
-    my $self = shift;
-
+subtest "print vs say" => sub {
     TODO: {
         local $TODO = "Perl bug, should be fixed in 5.18";
 
@@ -102,5 +88,4 @@ test "print vs  say" => sub {
     }
 };
 
-run_me;
 done_testing;

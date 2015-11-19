@@ -34,6 +34,8 @@ lib/Template/Caribou/Utils.pm
 t/00-compile.t
 t/00-report-prereqs.dd
 t/00-report-prereqs.t
+t/TestsFor/Template/Caribou/Files.pm
+t/TestsFor/Template/Caribou/Tags/Bootstrap.pm
 t/basic.t
 t/corpus/usecase_1.bou
 t/corpus/usecase_2/body.bou
@@ -41,9 +43,11 @@ t/corpus/usecase_2/head.bou
 t/corpus/usecase_2/page.bou
 t/import_dirs.t
 t/inheritence.t
+t/lib/MyRunner.pm
 t/lib/UseCase/One.pm
 t/lib/UseCase/Two.pm
 t/render.t
+t/run-test-classes.t
 t/tags-bootstrap.t
 t/tags_extended.t
 t/usecase_1.t

@@ -6,8 +6,6 @@ use warnings;
 
 use Carp;
 
-use Template::Caribou::Utils;
-
 use Sub::Exporter -setup => {
     exports => [
         qw/ attr render_tag /,

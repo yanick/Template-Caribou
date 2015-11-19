@@ -8,9 +8,7 @@ use Test::More tests => 1;
 use Template::Caribou::Tags::Bootstrap
     row => { -as => 'main' };
 
-use Moose;
-
-with 'Template::Caribou';
+use Template::Caribou;
 
 my $bou = Test->new;
 

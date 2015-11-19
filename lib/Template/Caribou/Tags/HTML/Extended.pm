@@ -212,7 +212,9 @@ sub markdown($){
 
     return unless length $_[0];
 
-    print ::RAW Text::MultiMarkdown::markdown(shift);
+    my $value = Text::MultiMarkdown::markdown(shift);
+
+    print ::RAW $value;
 }
 
 1;

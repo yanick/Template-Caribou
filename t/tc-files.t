@@ -18,9 +18,8 @@ use Test::More tests => 1;
     };
 }
 
-use Moose;
+use Template::Caribou;
 
-with 'Template::Caribou';
 with 'Template::Caribou::Files' => {
     dirs => [ 't/foo' ],
 };

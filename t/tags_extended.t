@@ -7,9 +7,7 @@ use Test::More tests => 8;
 
 use Template::Caribou::Tags::HTML::Extended ':all';
 
-use Moose;
-
-with 'Template::Caribou';
+use Template::Caribou;
 
 my $bou = Test->new;
 

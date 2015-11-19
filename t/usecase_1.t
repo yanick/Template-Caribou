@@ -16,15 +16,13 @@ is ref( $bou->t( "usecase_1" ) ) => 'CODE', 'template loaded';
 
 my $output = $bou->render( 'usecase_1' );
 
-note $output;
+like $output => qr#^<html>\n\s{2}<head>#, "nicely formatted";
+
+$bou->set_formatter('+Template::Caribou::Formatter::Twig');
 
 like $output => qr#^<html>\n\s{2}<head>#, "nicely formatted";
 
-$bou->set_formatter('Template::Caribou::Formatter::Twig');
-
-like $output => qr#^<html>\n\s{2}<head>#, "nicely formatted";
-
-$bou->set_formatter('+Twig');
+$bou->set_formatter('Twig');
 
 like $output => qr#^<html>\n\s{2}<head>#, "nicely formatted";
 

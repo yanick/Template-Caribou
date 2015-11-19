@@ -8,7 +8,7 @@ use UseCase::Two;
 use Test::More;
 
 my $bou = UseCase::Two->new( 
-    formatter => '+Twig',
+    formatter => 'Twig',
 );
 
 is_deeply [ sort $bou->all_templates ] => [ qw/ body head page / ], "template names"
