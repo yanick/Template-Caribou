@@ -9,6 +9,15 @@ use Template::Caribou::Tags::HTML::Extended ':all';
 
 use Template::Caribou;
 
+local *::RAW;
+open ::RAW, '>', \my $raw;
+
+is do {
+    doctype 'html5'
+} => "<!DOCTYPE html>\n", 'doctype';
+
+is do { favicon "foo" } => '<link href="foo" rel="shortcut icon" />', 'favicon';
+
 my $bou = Test->new;
 
 sub render_ok(&$$) {

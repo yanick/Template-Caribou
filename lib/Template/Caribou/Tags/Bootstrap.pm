@@ -11,9 +11,8 @@ use Sub::Exporter -setup => {
     groups => { default => ':all' },
 };
 
-use Template::Caribou::Tags
-    'render_tag',
-    'attr';
+use Template::Caribou::Utils qw/ attr /;
+use Template::Caribou::Tags qw/ render_tag /;
 
 sub _row_tag {
     my( undef, undef, $arg ) = @_;

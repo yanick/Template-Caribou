@@ -5,8 +5,7 @@ use warnings;
 
 use Moose;
 
-use Template::Caribou::Utils;
-use Template::Caribou::Tags qw/ attr /;
+use Template::Caribou::Utils qw/ attr /;
 use Template::Caribou::Tags::HTML qw/ :all /;
 
 use Template::Caribou;

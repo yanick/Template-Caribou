@@ -6,7 +6,8 @@ use warnings;
 
 use Carp;
 
-use Template::Caribou::Tags ':all';
+use Template::Caribou::Utils qw/ attr /;
+use Template::Caribou::Tags qw/ render_tag /;
 
 use experimental 'signatures';
 
@@ -20,18 +21,18 @@ use Sub::Exporter -setup => {
 
 =head2 doctype $type
 
+    doctype 'html5';
+    # <!DOCTYPE html>
+
 Prints the doctype declaration for the given type. 
 
-For the moment, only I<html 5> is supported as a type.
+For the moment, only I<html 5> (or I<html5>) is supported as a type.
 
 =cut
 
-sub doctype($) {
-    my $type = shift;
-
-    if ( $type eq 'html 5' ) {
-        print ::RAW "<!DOCTYPE html>\n";
-        return;
+sub doctype($type="html 5") {
+    if ( $type =~ /^html\s?5/ ) {
+        return ($Template::Caribou::TEMPLATE || 'Template::Caribou::Role')->render(sub{ print ::RAW "<!DOCTYPE html>\n" } );
     }
 
     die "type '$type' not supported";
@@ -39,13 +40,10 @@ sub doctype($) {
 
 =head2 favicon $url
 
-Generates the favicon tag.
+Generates a favicon link tag.
 
     favicon 'my_icon.png';
-
-will generates
-
-    <link rel="shortcut icon" href="my_icon.png" />
+    # <link rel="shortcut icon" href="my_icon.png" />
 
 =cut
 
@@ -60,17 +58,16 @@ sub favicon($) {
 
 =head2 submit $value, %attr
 
+    submit 'foo';
+    # <input type="submit" value="foo" />
+
 Shortcut for
 
-    input { attr type => submit, value => 'value', %attr; }
-
-If you don't want I<value> to be passed, the first argument might be
-set to I<undef>.
+    input { attr type => submit, value => $value, %attr; }
 
 =cut
 
-sub submit(@) {
-    my( $value, %attr ) = @_;
+sub submit($value=undef, %attr) {
 
     render_tag( 'input', '', sub {
         $_{type} = 'submit';
@@ -98,14 +95,16 @@ sub less($) {
 
 =head2 javascript $script
 
+    javascript q{ console.log( "Hello there!" ) };
+    # <script type="text/javascript">console.log( "Hello there!" )</script>
+
 Shortcut for 
 
     <script type="text/javascript>$script</script>
 
 =cut
 
-sub javascript($) {
-    my $script = shift;
+sub javascript($script) {
     render_tag( 'script', sub {
         attr type => 'text/javascript';
         print ::RAW $script;

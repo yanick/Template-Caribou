@@ -7,8 +7,8 @@ use Template::Caribou;
 use Template::Caribou::Utils;
 
 use Template::Caribou::Tags 
-    mytag => { name => 'foo', -as => 'foo' },
-    mytag => { name => 'bar', -as => 'bar' },
+    mytag => { tag => 'foo' },
+    mytag => { tag => 'bar' },
 ;
 
 my $self = __PACKAGE__->new;
