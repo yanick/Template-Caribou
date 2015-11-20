@@ -6,7 +6,6 @@ no warnings qw/ uninitialized /;
 
 use Carp;
 use Moose::Role;
-use MooseX::SemiAffordanceAccessor;
 use MooseX::ClassAttribute;
 use Template::Caribou::Utils;
 use Path::Class qw/ file dir /;

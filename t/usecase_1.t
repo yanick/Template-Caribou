@@ -18,11 +18,11 @@ my $output = $bou->render( 'usecase_1' );
 
 like $output => qr#^<html>\n\s{2}<head>#, "nicely formatted";
 
-$bou->set_formatter('+Template::Caribou::Formatter::Twig');
+$bou->formatter('+Template::Caribou::Formatter::Twig');
 
 like $output => qr#^<html>\n\s{2}<head>#, "nicely formatted";
 
-$bou->set_formatter('Twig');
+$bou->formatter('Twig');
 
 like $output => qr#^<html>\n\s{2}<head>#, "nicely formatted";
 
