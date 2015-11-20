@@ -8,7 +8,7 @@ use Carp;
 use Moose::Role;
 use MooseX::ClassAttribute;
 use Template::Caribou::Utils;
-use Path::Class qw/ file dir /;
+use Path::Tiny;
 
 use Template::Caribou::Tags;
 use Moose::Exporter;
@@ -53,8 +53,8 @@ sub get_template($self,$name) {
 sub all_templates($self) {
     return 
         sort
-        map { /\s(.*)/ }
-        grep { /^template / } $self->meta->get_method_list;
+        map { /^template (.*)/ } 
+            $self->meta->get_method_list;
 }
 
 
@@ -69,7 +69,7 @@ Returns the name of the imported templates.
 
 sub import_template_dir($self,$directory) {
 
-   $directory = dir( $directory );
+   $directory = path( $directory );
 
    return map {
         $self->import_template("$_")      
@@ -87,47 +87,37 @@ sub render {
 
     my $method = ref $template eq 'CODE' ? $template : $self->get_template($template);
 
-    my $output = do
-    {
-        local $Template::Caribou::TEMPLATE = $self;
-        #$Template::Caribou::TEMPLATE || $self;
-            
-        local $Template::Caribou::IN_RENDER = 1;
-        local *STDOUT;
-        local *::RAW;
-        local $Template::Caribou::OUTPUT;
-        local %Template::Caribou::attr;
-        tie *STDOUT, 'Template::Caribou::Output';
-        tie *::RAW, 'Template::Caribou::OutputRaw';
-        select STDOUT;
-        my $res = $method->( $self, @args );
-
-        $Template::Caribou::OUTPUT 
-            or ref $res ? $res : Template::Caribou::Output::escape( $res );
-    };
+    my $output = $self->_render($method,@args);
 
     # if we are still within a render, we turn the string
     # into an object to say "don't touch"
     $output = Template::Caribou::String->new( $output ) 
         if $Template::Caribou::IN_RENDER;
 
+    # called in a void context and inside a template => print it
     print ::RAW $output if $Template::Caribou::IN_RENDER and not defined wantarray;
 
     return $output;
 }
 
-=method show( $template, @args )
+sub _render ($self, $method, @args) {
+    local $Template::Caribou::TEMPLATE = $self;
+            
+    local $Template::Caribou::IN_RENDER = 1;
+    local $Template::Caribou::OUTPUT;
+    local %Template::Caribou::attr;
 
-Outside of a template, behaves like C<render()>. In a template, prints out
-the result of the rendering in addition of returning it.
+    local *STDOUT;
+    local *::RAW;
+    tie *STDOUT, 'Template::Caribou::Output';
+    tie *::RAW, 'Template::Caribou::OutputRaw';
 
-=cut
+    select STDOUT;
 
-sub show {
-    croak "'show()' must be called from within a template"
-        unless $Template::Caribou::IN_RENDER;
+    my $res = $method->( $self, @args );
 
-    print ::RAW $Template::Caribou::TEMPLATE->render( @_ );
+    return( $Template::Caribou::OUTPUT 
+            or ref $res ? $res : Template::Caribou::Output::escape( $res ) );
 }
 
 1;
