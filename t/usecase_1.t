@@ -12,7 +12,7 @@ my $bou = UseCase::One->new(
     formatter => Template::Caribou::Formatter::Twig->new,
 );
 
-is ref( $bou->t( "usecase_1" ) ) => 'CODE', 'template loaded';
+is ref( $bou->get_template( "usecase_1" ) ) => 'CODE', 'template loaded';
 
 my $output = $bou->render( 'usecase_1' );
 

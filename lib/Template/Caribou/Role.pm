@@ -39,37 +39,13 @@ around render => sub {
     return $result;
 };
 
-=method pretty_render()
-
-Returns true if rendered templates are passed through the prettifier.
-
-=method enable_pretty_render( $bool )
-
-if set to true, rendered templates will be filtered by a prettifier 
-before being returned by the C<render()> method.
-
-=cut
-
-
-role_type 'Formatter', { 
-    role => 'Template::Caribou::Formatter' 
-};
-
-coerce Formatter 
-    => from 'Str' => via {
-    s/^\+/Template::Caribou::Formatter::/;
-    eval "use $_; 1" 
-        or die "couldn't load '$_': $@";
-
-    $_->new;
-};
 
 
 sub set_template($self,$name,$value) {
     $self->meta->add_method( "template $name" => $value );
 }
 
-sub t($self,$name) {
+sub get_template($self,$name) {
     my $method = $self->meta->find_method_by_name( "template $name" )
         or die "template '$name' not found\n";
     return $method->body;
@@ -110,7 +86,7 @@ sub add_template {
 sub render {
     my ( $self, $template, @args ) = @_;
 
-    my $method = ref $template eq 'CODE' ? $template : $self->t($template);
+    my $method = ref $template eq 'CODE' ? $template : $self->get_template($template);
 
     my $output = do
     {
