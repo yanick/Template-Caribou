@@ -6,13 +6,11 @@ no warnings qw/ uninitialized /;
 
 use Carp;
 use Moose::Role;
-use MooseX::ClassAttribute;
 use Template::Caribou::Utils;
+
 use Path::Tiny;
 
 use Template::Caribou::Tags;
-use Moose::Exporter;
-use Moose::Util::TypeConstraints;
 
 use experimental 'signatures';
 
@@ -73,7 +71,7 @@ sub import_template_dir($self,$directory) {
 
    return map {
         $self->import_template("$_")      
-   } grep { $_->basename =~ /\.bou$/ } grep { -f $_ } $directory->children;
+   } grep { $_->is_file } $directory->children( qr/\.bou$/ );
 }
 
 sub add_template {
