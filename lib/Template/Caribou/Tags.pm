@@ -32,16 +32,16 @@ sub _gen_generic_tag {
 }
 
 sub attr(@){
-    return $Template::Caribou::attr{$_[0]} if @_ == 1;
+    return $Template::Caribou::Attr{$_[0]} if @_ == 1;
 
     croak "number of attributes must be even" if @_ % 2;
 
     while( my ( $k, $v ) = splice @_, 0, 2 ) {
         if ( $k =~ s/^\+// ) {
-            $Template::Caribou::attr{$k} .= ' '. $v;
+            $Template::Caribou::Attr{$k} .= ' '. $v;
         }
         else {
-            $Template::Caribou::attr{$k} = $v;
+            $Template::Caribou::Attr{$k} = $v;
         }
     }
 
@@ -60,7 +60,7 @@ sub render_tag {
         local *STDOUT;
         local *::RAW;
         local $Template::Caribou::OUTPUT;
-        local %Template::Caribou::attr;
+        local %Template::Caribou::Attr;
         tie *STDOUT, 'Template::Caribou::Output';
         tie *::RAW, 'Template::Caribou::OutputRaw';
 
@@ -69,7 +69,7 @@ sub render_tag {
         $inner = $Template::Caribou::OUTPUT 
             || ( ref $res ? $res : Template::Caribou::Output::escape( $res ) );
 
-        %attr = %Template::Caribou::attr;
+        %attr = %Template::Caribou::Attr;
     }
 
     $groom->( \%attr, \$inner ) if $groom;
