@@ -5,10 +5,7 @@ package Template::Caribou::Manual;
 
     package MyTemplate;
 
-    use Moose;
     use Template::Caribou;
-
-    with 'Template::Caribou';
 
     use Template::Caribou::Tags::HTML qw/ :all /;
 
@@ -37,24 +34,21 @@ package Template::Caribou::Manual;
 
 =head1 DESCRIPTION
 
-This manpage describes how to use the C<Caribou> templating system. For the
-documentation of the role itself, refer to the L<Template::Caribou> manpage
-itself.
+This document describes how to use the C<Caribou> templating system. 
 
 The C<Caribou> system is made of two major components: the templating role
 itself (L<Template::Caribou>) and the tag libraries,
 (L<Template::Caribou::Tags>,
 L<Template::Caribou::Tags::HTML::Extended>, etc). 
 
-=head1 THE C<Template::Caribou> ROLE
+=head1 C<Template::Caribou::Role> 
 
-The C<Template::Caribou> role behaves like any other L<Moose> role. Typically,
+The C<Template::Caribou::Role> role behaves like any other L<Moose> role. Typically,
 a class will consume it via
 
     package MyTemplate;
 
     use Moose;
-    use Template::Caribou;
 
     with 'Template::Caribou';
 

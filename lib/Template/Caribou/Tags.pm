@@ -6,6 +6,10 @@ use warnings;
 
 use Carp;
 
+use experimental 'signatures';
+
+use Template::Caribou::Utils ();
+
 use Sub::Exporter -setup => {
     exports => [
         qw/ attr render_tag /,
@@ -72,7 +76,9 @@ sub render_tag {
         %attr = %Template::Caribou::Attr;
     }
 
-    $groom->( \%attr, \$inner ) if $groom;
+    if ( $groom ) {
+        $groom->( \%attr, \$inner );
+    }
 
     my $attrs;
     for( sort keys %attr ) {
