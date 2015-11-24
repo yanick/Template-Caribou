@@ -157,7 +157,7 @@ sub set_template($self,$name,$value) {
 
 Returns the requested template, or nothing it does not exist.
 
-=end
+=cut
 
 sub get_template($self,$name) {
     return eval {
