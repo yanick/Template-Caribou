@@ -20,9 +20,8 @@ sub _row_tag {
 
 
     my $groom = sub {
-        my( $attr ) = @_;
-        $attr->{class} .= ' row';
-        $attr->{class} .= '-fluid' if $arg->{fluid};
+        $_{class} .= ' row';
+        $_{class} .= '-fluid' if $_{fluid};
     };
 
     return sub(&) {
@@ -34,9 +33,8 @@ sub _span_tag {
     my( undef, undef, $arg ) = @_;
 
     my $groom = sub {
-        my( $attr ) = @_;
-        $attr->{class} .= ' span' . $arg->{span} || 1;
-        $attr->{class} .= ' offset' . $arg->{offset} if $arg->{offset};
+        $_{class} .= ' span' . $_{span} || 1;
+        $_{class} .= ' offset' . $_{offset} if $_{offset};
     };
 
     return sub(&) {

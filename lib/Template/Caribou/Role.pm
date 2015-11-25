@@ -291,7 +291,6 @@ sub _render ($self, $method, @args) {
             
     local $Template::Caribou::IN_RENDER = 1;
     local $Template::Caribou::OUTPUT;
-    local %Template::Caribou::attr;
 
     local *STDOUT;
     local *::RAW;

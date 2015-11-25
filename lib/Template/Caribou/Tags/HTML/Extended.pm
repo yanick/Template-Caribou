@@ -73,9 +73,9 @@ sub submit(@) {
     my( $value, %attr ) = @_;
 
     render_tag( 'input', '', sub {
-        $_[0]->{type} = 'submit';
-        $_[0]->{value} = $value if $value;
-        $_[0]->{$_} = $attr{$_} for keys %attr;
+        $_{type} = 'submit';
+        $_{value} = $value if $value;
+        $_{$_} = $attr{$_} for keys %attr;
     });
 }
 
@@ -178,7 +178,7 @@ is equivalent to
 
 sub anchor($href,$inner) {
     render_tag( 'a', $inner, sub {
-        $_[0]->{href} ||= $href;
+        $_{href} ||= $href;
     });
 }
 
@@ -195,7 +195,7 @@ sub image($src,%attr) {
     $attr{src} = $src;
 
     render_tag( 'img', '', sub {
-        $_[0]->{$_} = $attr{$_} for keys %attr;
+        $_{$_} = $attr{$_} for keys %attr;
     } );
 }
 

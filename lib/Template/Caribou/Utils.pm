@@ -14,7 +14,7 @@ use Carp;
 
 use Template::Caribou::Tags qw/ attr /;
 
-our @EXPORT = qw/ template attr show /;
+our @EXPORT = qw/ template show /;
 
 sub template {
     my $class = eval { $_[0]->DOES('Template::Caribou') } ? shift : caller;

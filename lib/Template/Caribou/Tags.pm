@@ -9,6 +9,7 @@ use Carp;
 use experimental 'signatures';
 
 use Template::Caribou::Utils ();
+use Template::Caribou::Role;
 
 use Sub::Exporter -setup => {
     exports => [
@@ -52,32 +53,57 @@ sub attr(@){
     return;
 }
 
+=function render_tag( $tag_name, $inner_block, \&groom )
+
+Prints out a tag in a template. The C<$inner_block> is a string or coderef
+holding the content of the tag. 
+
+If the C<$inner_block> is empty, the tag will be of the form
+C<< <foo /> >>.
+
+    render_tag( 'div', 'hello' );         #  <div>hello</div>
+
+    render_tag( 'div', sub { 'hello' } )  # <div>hello</div>
+
+    render_tag( 'div', '' );              #  <div />
+
+An optional grooming function can be passed. If it is, an hash holding the 
+attributes of the tag, and its inner content will be passed to it as C<%_> and C<$_>, respectively.
+
+   # '<div>the current time is Wed Nov 25 13:18:33 2015</div>'
+   render_tag( 'div', 'the current time is DATETIME', sub {
+        s/DATETIME/scalar localtime/eg;
+   });
+
+   # '<div class="mine">foo</div>'
+   render_tag( 'div', 'foo', sub { $_{class} = 'mine' } )
+
+
+
+
+=cut
+
 sub render_tag {
     my ( $tag, $inner_sub, $groom ) = @_;
 
-    my $inner;
-    my %attr;
+    my $sub = ref $inner_sub eq 'CODE' ? $inner_sub : sub { $inner_sub };
 
-    {
-        no warnings qw/ uninitialized /;
+    # need to use the object for calls to 'show'
+    my $bou = $Template::Caribou::TEMPLATE || 'Template::Caribou::Role';
 
-        local *STDOUT;
-        local *::RAW;
-        local $Template::Caribou::OUTPUT;
-        local %Template::Caribou::Attr;
-        tie *STDOUT, 'Template::Caribou::Output';
-        tie *::RAW, 'Template::Caribou::OutputRaw';
+    local %Template::Caribou::Attr;
 
-        my $res = ref $inner_sub ? $inner_sub->() : $inner_sub;
+    my $inner = $bou->render($sub);
 
-        $inner = $Template::Caribou::OUTPUT 
-            || ( ref $res ? $res : Template::Caribou::Output::escape( $res ) );
-
-        %attr = %Template::Caribou::Attr;
-    }
+    my %attr = %Template::Caribou::Attr;
 
     if ( $groom ) {
-        $groom->( \%attr, \$inner );
+        local $_ = "$inner";  # stringification required in case it's an object
+        local %_ = %attr;
+
+        $groom->();
+
+        ($inner,%attr) = ( $_, %_ );
     }
 
     my $attrs;

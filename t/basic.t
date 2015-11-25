@@ -35,9 +35,7 @@ sub bar(&) { render_tag( 'bar', shift ) }
 
 template 'escape_outer' => sub {
     foo {};
-    foo {
-        show( 'escape_inner' );
-    };
+    foo { show( 'escape_inner' ); };
     foo {};
 };
 

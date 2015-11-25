@@ -11,20 +11,20 @@ use Class::MOP::Class;
 my $first  = MyTemplate->new;
 my $second = MyTemplate->new;
 
-ok ! $second->has_template('foo'), "not defined yet";
+ok ! $second->get_template('foo'), "not defined yet";
 
 $first->set_template( 'foo' => sub { } );
 
-ok $second->has_template('foo'), "class-wide";
+ok $second->get_template('foo'), "class-wide";
 
 my $third = MyTemplate->anon_instance;
 
-ok $third->has_template('foo'), "inherited";
+ok $third->get_template('foo'), "inherited";
 
 $third->set_template( 'bar' => sub { } );
 
-ok $third->has_template('bar'), "third has it";
-ok !$second->has_template('bar'), "but not the rest";
+ok $third->get_template('bar'), "third has it";
+ok !$second->get_template('bar'), "but not the rest";
 
 
 
