@@ -18,7 +18,7 @@ package Template::Caribou::Files;
 =head1 DESCRIPTION
 
 With I<Template::Caribou::Files>, a Caribou class will automatically import
-all template file (i.e., all files with a C<.bou> extension) under the given directories.
+all template files (i.e., all files with a C<.bou> extension) under the given directories.
 
 The names of the imported templates will be their path, relative to the
 imported directories, without their extension. To take the example in the
