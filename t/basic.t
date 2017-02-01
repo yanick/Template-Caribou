@@ -13,20 +13,20 @@ use Template::Caribou::Tags qw/ render_tag /;
 
 with 'Template::Caribou';
 
-template inner => sub {
+template inner_tmpl => sub {
     'hello world';
 };
 
 template outer => sub {
     print 'x';
-    show( 'inner' );
+    show( 'inner_tmpl' );
     print 'x';
 };
 
-test 'inner template' => sub {
+test 'inner_tmpl' => sub {
     my $self = shift;
 
-    is $self->render('inner') => 'hello world';
+    is $self->render('inner_tmpl') => 'hello world';
 };
 
 test 'outer' => sub {
@@ -60,7 +60,7 @@ test 'escaping' => sub {
 
 template 'end_show' => sub {
     foo { };
-    show( 'inner' );
+    show( 'inner_tmpl' );
 };
 
 test 'end_show' => sub {
