@@ -143,6 +143,19 @@ use List::AllUtils qw/ uniq /;
 
 use Template::Caribou::Types qw/ Formatter /;
 
+has indent => (
+    is      => 'ro',
+    default => 1,
+);
+
+=method indent( $bool )
+
+Accessor to the indent attribute. Indicates if the tags rendered 
+within the templates should be pretty-printed with indentation or not. 
+Defaults to C<true>.
+
+=cut
+
 =method set_template( $name => sub { ... } )
 
 Sets the given template.
@@ -270,6 +283,10 @@ The C<$template> can be a template name, or an anonymous sub.
 
 sub render {
     my ( $self, $template, @args ) = @_;
+
+    # 0.1 is true, and yet will round down to '0' for the first indentation
+    local $Template::Caribou::TAG_INDENT_LEVEL 
+        = $Template::Caribou::TAG_INDENT_LEVEL // 0.1 * !! $self->indent;
 
     my $method = ref $template eq 'CODE' ? $template : $self->get_template($template);
 

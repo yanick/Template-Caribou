@@ -1,23 +1,25 @@
 package Template::Caribou::Tags::HTML::Extended;
 # ABSTRACT: custom HTML tags optimized for DWIMery
 
+
 use strict;
 use warnings;
 
 use Carp;
 
-use Template::Caribou::Utils qw/ attr /;
-use Template::Caribou::Tags qw/ render_tag /;
+use Template::Caribou::Tags qw/ render_tag attr /;
+use Class::Load qw/ load_class /;
 
 use experimental 'signatures';
 
-use Sub::Exporter -setup => {
-    exports => [qw/ css anchor image markdown javascript javascript_include submit
+use parent 'Exporter::Tiny';
+
+our @EXPORT = qw/
+    css anchor image markdown javascript javascript_include submit
     less css_include doctype
     favicon
-    /],
-    groups => { default => ':all' },
-};
+
+/;
 
 =head2 doctype $type
 
@@ -32,10 +34,10 @@ For the moment, only I<html 5> (or I<html5>) is supported as a type.
 
 sub doctype($type="html 5") {
     if ( $type =~ /^html\s?5/ ) {
-        return ($Template::Caribou::TEMPLATE || 'Template::Caribou::Role')->render(sub{ print ::RAW "<!DOCTYPE html>\n" } );
+        return Template::Caribou::Tags::print_raw( "<!DOCTYPE html>\n" );
     }
 
-    die "type '$type' not supported";
+    croak "type '$type' not supported";
 }
 
 =head2 favicon $url
@@ -78,16 +80,12 @@ sub submit($value=undef, %attr) {
 
 =head2 less $script
 
-Compile the LESS script into CSS.
+Compiles the LESS script into CSS. Requires L<CSS::LESSp>.
 
 =cut
 
-sub less($) {
-    my $text = shift;
-
-    require CSS::LESSp;
-
-    my $css = join '', CSS::LESSp->parse($text);
+sub less($text) {
+    my $css = join '', load_class('CSS::LESSp')->parse($text);
 
     css($css);
 }
@@ -129,9 +127,11 @@ sub javascript_include($) {
     });
 }
 
-=head2 css_include
-<link href="public/bootstrap/css/bootstrap.min.css" rel="stylesheet"
-        media="screen" />
+=head2 css_include $url, %args
+
+    css_include 'public/bootstrap/css/bootstrap.min.css', media => 'screen';
+    # <link href="public/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+    #       media="screen" />
 
 =cut
 
@@ -181,7 +181,10 @@ sub anchor($href,$inner) {
     });
 }
 
-=head2 image $src, @attr
+=head2 image $src, %attr
+
+    image 'kitten.jpg';
+    # <img src="kitten.jpg" />
 
 Shortcut for <img>.
 
@@ -251,5 +254,5 @@ __END__
 
 =head1 DESCRIPTION
 
-I<Template::Caribou::Tags::HTML::Extended> provides utility tags that provides 
-shortcuts for typical HTML constructs.
+Whereas L<Template::Caribou::Tags::HTML> offers straight function equivalents to their
+HTML tags, this module provides a more DWIM interface, and shortcut for often used patterns.

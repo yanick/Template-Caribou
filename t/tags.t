@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 7;
+use Test::More tests => 9;
 
 use Template::Caribou::Tags qw/ render_tag /;
 
@@ -30,6 +30,36 @@ use Template::Caribou::Tags
         attr => { style => '!' },
     };
 
-is( Template::Caribou::Role->render(sub{ foo {}  }) => '<div />' );
-is( Template::Caribou::Role->render(sub{ bar {}  }) => '<bar />' );
-is( Template::Caribou::Role->render(sub{ baz {}  }) => '<zab class="quux" style="!">yay</zab>' );
+{
+    package Bou; use Template::Caribou;
+}
+
+my $bou= Bou->new( indent => 0 );
+
+is( $bou->render(sub{ foo {}  }) => '<div />' );
+is( $bou->render(sub{ bar {}  }) => '<bar />' );
+is( $bou->render(sub{ baz {}  }) => '<zab class="quux" style="!">yay</zab>' );
+
+subtest 'with indentation' => sub {
+    local $Template::Caribou::TAG_INDENT_LEVEL = 0.1;
+    like foo {
+            foo { 'one' };
+            foo { 
+                print 'two';
+                foo { 'three' };
+            }
+        } 
+    => qr/<div>\n  <div>one/;
+};
+
+subtest 'without indentation' => sub {
+    local $Template::Caribou::TAG_INDENT_LEVEL = 0;
+    like foo {
+            foo { 'one' };
+            foo { 
+                print 'two';
+                foo { 'three' };
+            }
+        } 
+    => qr/<div><div>one/;
+};

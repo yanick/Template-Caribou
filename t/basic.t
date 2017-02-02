@@ -8,6 +8,8 @@ use Test::More;
 use Template::Caribou;
 use Template::Caribou::Tags qw/ render_tag /;
 
+has '+indent' => ( default => 0 );
+
 my $self = __PACKAGE__->new;
 
 template inner_tmpl => sub {
@@ -21,8 +23,6 @@ template outer => sub {
 };
 
 subtest 'inner_tmpl' => sub {
-    my $self = shift;
-
     is $self->render('inner_tmpl') => 'hello world';
 };
 

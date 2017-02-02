@@ -184,11 +184,20 @@ sub render_tag {
     my $sub = ref $inner_sub eq 'CODE' ? $inner_sub : sub { $inner_sub };
 
     # need to use the object for calls to 'show'
-    my $bou = $Template::Caribou::TEMPLATE || 'Template::Caribou::Role';
+    my $bou = $Template::Caribou::TEMPLATE || Moose::Meta::Class->create_anon_class(
+        roles => [ 'Template::Caribou::Role' ] 
+    )->new_object;
 
     local %Template::Caribou::Attr;
 
-    my $inner = $bou->render($sub);
+    my $inner = do {
+        local $Template::Caribou::TAG_INDENT_LEVEL = $Template::Caribou::TAG_INDENT_LEVEL;
+
+        $Template::Caribou::TAG_INDENT_LEVEL++
+            if $Template::Caribou::TAG_INDENT_LEVEL // $bou->indent;
+
+        $bou->render($sub);
+    };
 
     my %attr = %Template::Caribou::Attr;
 
@@ -208,12 +217,21 @@ sub render_tag {
     }
 
     no warnings qw/ uninitialized /;
+
+    my $prefix = !!$Template::Caribou::TAG_INDENT_LEVEL 
+        && "\n" . ( '  ' x $Template::Caribou::TAG_INDENT_LEVEL );
+
     my $output = length($inner) 
-        ? Template::Caribou::String->new( "<${tag}$attrs>$inner</$tag>" ) 
-        : Template::Caribou::String->new( "<${tag}$attrs />" ) 
+        ? Template::Caribou::String->new( "$prefix<${tag}$attrs>$inner$prefix</$tag>" ) 
+        : Template::Caribou::String->new( "$prefix<${tag}$attrs />" ) 
         ;
-    print ::RAW $output;
-    return $output;
+
+    return print_raw( $output );
+}
+
+sub print_raw($text) {
+    print ::RAW $text;
+    return $text; 
 }
 
 1;

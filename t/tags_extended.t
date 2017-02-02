@@ -3,11 +3,13 @@ use warnings;
 
 package Test;
 
-use Test::More tests => 8;
+use Test::More tests => 10;
 
 use Template::Caribou::Tags::HTML::Extended ':all';
 
 use Template::Caribou;
+
+has '+indent' => default => 0;
 
 local *::RAW;
 open ::RAW, '>', \my $raw;

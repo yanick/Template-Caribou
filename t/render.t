@@ -11,6 +11,8 @@ use Template::Caribou::Tags
     mytag => { tag => 'bar' },
 ;
 
+has '+indent' => default => 0;
+
 my $self = __PACKAGE__->new;
 
 subtest string => sub {
