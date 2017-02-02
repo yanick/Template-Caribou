@@ -8,6 +8,7 @@ Revision history for Template-Caribou
 
  [BUG FIXES]
  - POD fixes (GH#3, Mohammad S Anwar, GH#4, Paulo Custodio)
+ - Amend subroutine named inner to inner_tmpl. (GH#5, Lisa Hare)
 
  [DOCUMENTATION]
 
