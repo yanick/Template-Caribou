@@ -48,4 +48,5 @@ t/tags-bootstrap.t
 t/tags_extended.t
 t/usecase_1.t
 t/usecase_2.t
+xt/release/pause-permissions.t
 xt/release/unused-vars.t
