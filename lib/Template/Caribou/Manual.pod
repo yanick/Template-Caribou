@@ -43,7 +43,7 @@ itself.
 
 The C<Caribou> system is made of two major components: the templating role
 itself (L<Template::Caribou>) and the tag libraries,
-(L<Template::Caribou::Tags>, L<Template::Caribou::Tags>,
+(L<Template::Caribou::Tags>,
 L<Template::Caribou::Tags::HTML::Extended>, etc). 
 
 =head1 THE C<Template::Caribou> ROLE
