@@ -4,27 +4,44 @@ use warnings;
 package MyTemplate;
 
 use Test::More tests => 5;
+use Test::Exception;
 
 use Template::Caribou;
-use Class::MOP::Class;
 
-my $first  = MyTemplate->new;
+template 'class_wide' => sub { };
+
+my $first  = MyTemplate->new( can_add_templates => 1 );
 my $second = MyTemplate->new;
 
-ok ! $second->get_template('foo'), "not defined yet";
+ok $first->can( 'class_wide' );
 
-$first->set_template( 'foo' => sub { } );
 
-ok $second->get_template('foo'), "class-wide";
+subtest 'adding foo on an instance' => sub {
 
-my $third = MyTemplate->anon_instance;
+    ok ! $second->can('foo'), "not defined yet";
 
-ok $third->get_template('foo'), "inherited";
+    $first->template( 'foo' => sub { } );
 
-$third->set_template( 'bar' => sub { } );
+    ok $first->can('foo'), '$first has foo';
+    ok $second->can('foo'), "it's class-wide";
+}; 
 
-ok $third->get_template('bar'), "third has it";
-ok !$second->get_template('bar'), "but not the rest";
+throws_ok { $second->template( 'cant' => sub { } ) }
+    qr/can only add templates/, "can't add templates without the flag";
+    
 
+subtest 'anon instance' => sub {
+    my $third = MyTemplate->anon_instance;
+
+    ok $third->can('foo'), "inherited";
+    ok $third->can( 'class_wide' );
+
+    lives_ok {
+        $third->template( 'bar' => sub { } )
+    } 'anon instances can define new templates';
+
+    ok $third->can('bar'), "third has it";
+    ok !$second->can('bar'), "but not the rest";
+};
 
 

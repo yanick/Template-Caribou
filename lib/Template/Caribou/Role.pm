@@ -200,7 +200,9 @@ with the given arguments. Useful when wanting to define templates for one specif
 =cut
 
 sub anon_instance($class,@args) {
-    Class::MOP::Class->create_anon_class(superclasses => [ $class ])->new_object(@args);
+    Class::MOP::Class
+        ->create_anon_class(superclasses => [ $class ])
+        ->new_object( can_add_templates => 1, @args);
 }
 
 =method formatter( $formatter ) 
@@ -288,9 +290,7 @@ sub render {
     local $Template::Caribou::TAG_INDENT_LEVEL 
         = $Template::Caribou::TAG_INDENT_LEVEL // 0.1 * !! $self->indent;
 
-    my $method = ref $template eq 'CODE' ? $template : $self->get_template($template);
-
-    my $output = $self->_render($method,@args);
+    my $output = $self->_render($template,@args);
 
     # if we are still within a render, we turn the string
     # into an object to say "don't touch"
