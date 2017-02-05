@@ -8,34 +8,39 @@ use Test::More;
 use Template::Caribou;
 use Template::Caribou::Tags qw/ render_tag /;
 
+use experimental 'signatures';
+
 has '+indent' => ( default => 0 );
 
 my $self = __PACKAGE__->new;
 
 template inner_tmpl => sub {
+    warn 'inner here';
     'hello world';
 };
 
-template outer => sub {
+template outer => sub($self) {
     print 'x';
-    show( 'inner_tmpl' );
+    $self->inner_tmpl;
     print 'x';
 };
 
 subtest 'inner_tmpl' => sub {
-    is $self->render('inner_tmpl') => 'hello world';
+    is $self->inner_tmpl => 'hello world';
 };
 
+$::NOW = 1;
 subtest 'outer' => sub {
-    is $self->render('outer') => 'xhello worldx';
+    is $self->outer => 'xhello worldx';
 };
 
-sub foo(&) { render_tag( 'foo', shift ) }
-sub bar(&) { render_tag( 'bar', shift ) }
+sub foo :prototype(&) { render_tag( 'foo', shift ) }
+sub bar :prototype(&) { render_tag( 'bar', shift ) }
 
 template 'escape_outer' => sub {
+    my $self = shift;
     foo {};
-    foo { show( 'escape_inner' ); };
+    foo { $self->escape_inner; };
     foo {};
 };
 
@@ -44,17 +49,18 @@ template 'escape_inner' => sub {
 };
 
 subtest 'escaping' => sub {
-    is $self->render('escape_outer') 
+    is $self->escape_outer
         => qq{<foo /><foo><bar>&lt;yay></bar></foo><foo />};
 };
 
 template 'end_show' => sub {
     foo { };
-    show( 'inner_tmpl' );
+    $_[0]->inner_tmpl;
+    return;
 };
 
 subtest 'end_show' => sub {
-    is $self->render( 'end_show' ) => '<foo />hello world';
+    is $self->end_show => '<foo />hello world';
 };
 
 template 'attributes' => sub {
@@ -69,7 +75,7 @@ template 'attributes' => sub {
 };
 
 subtest attributes => sub {
-    is $self->render( 'attributes' ) => 
+    is $self->attributes => 
         '<foo foo="bar">bar</foo><foo a="1 3" b="4" />';
 };
 

@@ -8,8 +8,8 @@ use Moose::Util qw/ with_traits /;
     package Bar;
 
     use Moose::Role;
-    with 'Template::Caribou::Role';
-    use Template::Caribou::Utils 'template';
+
+    use Template::Caribou;
 
     template bar => sub { 'bar' };
 }
@@ -21,11 +21,11 @@ use Moose::Util qw/ with_traits /;
 
     with 'Bar';
 
-    template foo => sub { print 'x'; show('bar') };
+    template foo => sub { print 'x'; $_[0]->bar };
 
 }
 
-is( Foo->new->render('foo') => 'xbar', 'template inherited' );
+is( Foo->new->foo => 'xbar', 'template inherited' );
 
 
 

@@ -137,16 +137,54 @@ use Path::Tiny;
 
 use Template::Caribou::Tags;
 
-use experimental 'signatures';
 
 use List::AllUtils qw/ uniq /;
 
 use Template::Caribou::Types qw/ Formatter /;
 
+use Moose::Exporter;
+Moose::Exporter->setup_import_methods(
+    as_is => [ 'template' ],
+);
+
+use experimental 'signatures';
+
 has indent => (
     is      => 'ro',
     default => 1,
 );
+
+has can_add_templates => (
+    is => 'ro',
+);
+
+sub template {
+    my $class = shift;
+
+    # cute way to say $self might or might not be there
+    my( $coderef, $name, $self ) = reverse @_;
+
+    if ( $self ) {
+        local $Carp::CarpLevel = 1;
+        croak "can only add templates from instances created via 'anon_instance' ",
+            "or with the attribute 'can_add_templates'" unless $self->can_add_templates;
+
+        $class = $self->meta;
+    }
+
+
+    $class->add_method( $name => sub {
+        my( $self, @args ) = @_;
+        if( defined wantarray ) {
+            return $self->render( $coderef, @args );
+        }
+        else {
+            # void context
+            $self->render( $coderef, @args );
+            return;
+        }
+    });
+}
 
 =method indent( $bool )
 
@@ -237,18 +275,6 @@ has formatter => (
     predicate => 'has_formatter',
 );
 
-around render => sub {
-    my( $orig, $self, @args ) = @_;
-    my $result = $orig->($self,@args);
-
-    if ( ! $Template::Caribou::IN_RENDER and $self->has_formatter ) {
-        $result = $self->formatter->format($result);
-    }
-
-    return $result;
-};
-
-
 =method import_template_dir( $directory )
 
 Imports all the files with a C<.bou> extension in I<$directory>
@@ -297,6 +323,8 @@ sub render {
     $output = Template::Caribou::String->new( $output ) 
         if $Template::Caribou::IN_RENDER;
 
+    $DB::single = $::NOW;
+    
     # called in a void context and inside a template => print it
     print ::RAW $output if $Template::Caribou::IN_RENDER and not defined wantarray;
 
