@@ -117,12 +117,12 @@ use warnings;
 
 use Carp;
 
-use experimental 'signatures';
-
 use Template::Caribou::Utils 'attr';
 use Template::Caribou::Role;
 
 use parent 'Exporter::Tiny';
+use experimental 'signatures';
+
 
 our @EXPORT_OK = qw/ render_tag mytag attr /;
 
@@ -196,7 +196,7 @@ sub render_tag {
         $Template::Caribou::TAG_INDENT_LEVEL++
             if $Template::Caribou::TAG_INDENT_LEVEL // $bou->indent;
 
-        $bou->render($sub);
+        $bou->get_render($sub);
     };
 
     my %attr = %Template::Caribou::Attr;

@@ -50,27 +50,57 @@ use warnings;
 
 use MooseX::Role::Parameterized;
 
+use Module::Runtime qw/ module_notional_filename /;
+use Path::Tiny;
+use Try::Tiny;
+
+use experimental 'postderef';
+
 parameter dirs => (
-    traits => [ 'Array' ],
-    isa => 'ArrayRef',
-    default => sub { [] },
-    handles => {
-        all_dirs => 'elements',
-    },
+    default => undef,
 );
 
-parameter auto_reload => (
-    isa => 'Bool',
-    default => 0,
+parameter intro => (
+    default => sub { [] },
 );
+
+    sub _load_template_file {
+        my $self = shift;
+        my $target = shift;
+
+        my( $name, $file ) = @_ == 2 ? @_ : ( undef, @_ );
+
+        $file = path($file);
+
+        unless( $name ) {
+            $name = $file->basename =~ s/\.bou//r;
+        }
+
+        my $class = ref $target || $target;
+
+        my $code = join "\n",
+            "package $class;",
+            $self->intro->@*,
+            "# line 1 ". $file,
+            $file->slurp;
+
+        my $coderef = eval $code;
+        die $@ if $@;
+
+        Template::Caribou::Role::template( (ref $target ? ( $target->meta, $target ) : $target->meta), $name, $coderef );
+    };
+
+
+    sub _load_template_dir {
+        my ( $self, $target, $dir ) = @_;
+
+        $dir = path($dir);
+
+        Template::Caribou::Files::_load_template_file($self,$target,$_) for $dir->children( qr/\.bou$/ );
+    };
+
 
 role {
-    use Path::Class;
-    use List::Pairwise qw/ mapp /;
-
-    use MooseX::ClassAttribute;
-    use MooseX::SemiAffordanceAccessor;
-
     my $p = shift;
     my %arg = @_;
 
@@ -84,18 +114,52 @@ role {
         },
     );
 
+    my $intro = $p->intro;
+    has file_intro => (
+        is => 'ro',
+        default => sub { $intro },
+    );
+
+    my $dirs = $p->dirs;
+
+    unless ( $dirs ) {
+        my $name = $arg{consumer}->name;
+
+        try {
+            my $path = path( $INC{ module_notional_filename( $name )} =~ s/\.pm$//r );
+            die unless $path->is_dir;
+            $dirs = [ $path ];
+        } catch {
+            die "can't find directory for module '$name'";
+        };
+    }
+
+    # so that we can call the role many times,
+    # and the defaults will telescope into each other
     sub _build_template_dirs { [] }
 
     around _build_template_dirs => sub {
         my( $ref, $self ) = @_;
 
-        return [ @{ $ref->($self) }, $p->all_dirs ];
+        return [ @{ $ref->($self) }, @$dirs ];
     };
 
-    before 'render' => sub {
-        $_[0]->_import_template_dirs( @{$p->dirs} ) #@{ $_[0]->template_dirs } ) 
-            if not $Template::Caribou::IN_RENDER;
-    } if $p->auto_reload;
+    $DB::single = 1;
+    
+
+    Template::Caribou::Files::_load_template_dir( $p, $arg{consumer}->name, $_) for @$dirs;
+
+    method add_template_file => sub {
+        my( $self, $file ) = @_;
+        $file = path($file);
+
+        Template::Caribou::Files::_load_template_file(
+            $p,
+            $self,
+            $file
+        );
+    };
+
 
 =method import_template_file( $name => $file )
 
@@ -106,53 +170,6 @@ Returns the name of the imported template.
 
 =cut
 
-sub _import_template_file {
-    my $self = shift;
-
-    my( $name, $file ) = @_ == 2 ? @_ : ( undef, @_ );
-
-    $file = file($file) unless ref $file;
-
-    ( $name = $file->basename ) =~ s/\..*?$// unless $name;
-
-    my $class = ref( $self ) || $self;
-
-    my $lines = $file->slurp;
-
-    my $signature = $lines =~ m{^#\((.*)\)\s*$}m ? $1 : '';
-
-    my $code = <<"END_EVAL";
-package $class;
-use experimental 'signatures';
-sub (\$self,$signature) {
-# line 1 "@{[ $file->absolute ]}"
-$lines
-}
-END_EVAL
-
-    my $sub = eval $code;
-
-    die $@ if $@;
-    $self->set_template( $name => $sub );
-
-    return $name;
-}
-
-sub _import_template_dirs {
-    my ( $self, @dirs ) = @_;
-
-    for my $dir ( map { dir($_) }  @dirs ) {
-        $dir->recurse( callback => sub{ 
-             return unless $_[0] =~ /\.bou$/;
-             my $f = $_[0]->relative($dir)->stringify;
-             $f =~ s/\.bou$//;
-             _import_template_file( $self, $f => $_[0] );
-        });
-    }
-
-};
-
-    _import_template_dirs( $arg{consumer}->name, @{$p->dirs} );
 
 };
 

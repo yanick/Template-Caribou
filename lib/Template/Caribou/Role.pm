@@ -155,7 +155,7 @@ has indent => (
 );
 
 has can_add_templates => (
-    is => 'ro',
+    is => 'rw',
 );
 
 sub template {
@@ -309,6 +309,12 @@ The C<$template> can be a template name, or an anonymous sub.
 
 =cut
 
+sub get_render {
+    my ( $self, $template, @args ) = @_;
+    local $Template::Caribou::IN_RENDER;
+    return $self->render($template,@args);
+}
+
 sub render {
     my ( $self, $template, @args ) = @_;
 
@@ -326,7 +332,7 @@ sub render {
     $DB::single = $::NOW;
     
     # called in a void context and inside a template => print it
-    print ::RAW $output if $Template::Caribou::IN_RENDER and not defined wantarray;
+    print ::RAW $output if $Template::Caribou::IN_RENDER;
 
     return $output;
 }
