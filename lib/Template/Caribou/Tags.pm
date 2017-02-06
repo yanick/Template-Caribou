@@ -117,7 +117,6 @@ use warnings;
 
 use Carp;
 
-use Template::Caribou::Utils 'attr';
 use Template::Caribou::Role;
 
 use parent 'Exporter::Tiny';
@@ -125,6 +124,79 @@ use experimental 'signatures';
 
 
 our @EXPORT_OK = qw/ render_tag mytag attr /;
+
+=function attr( $name => $value )
+
+Accesses the attributes of a tag within its block.
+
+If provided an even number of parameters, sets the attributes to those values.
+
+
+    div {
+        attr class => 'foo', 
+             style => 'text-align: center';
+
+        "hi there";
+    };
+
+    # <div class="foo" style="text-align: center">hi there</div>
+    
+Many calls to C<attr> can be done within the same block.
+
+    div {
+        attr class => 'foo';
+        attr style => 'text-align: center';
+
+        "hi there";
+    };
+
+    # <div class="foo" style="text-align: center">hi there</div>
+  
+To add to an attribute instead of replacing its value, prefix the attribute name
+with a plus sign.
+
+    div {
+        attr class    => 'foo';
+
+        attr '+class' => 'bar';
+
+        "hi there";
+    };
+
+    # <div class="foo bar">hi there</div>
+   
+The value of an attribute can also be queried by passing a single argument to C<attr>.
+
+    div { 
+        ...; # some complex stuff here
+
+        my $class = attr 'class';
+
+        attr '+style' => 'text-align: center' if $class =~ /_centered/;
+
+        ...;
+    }
+    
+
+=cut
+
+sub attr(@attrs){
+    return $Template::Caribou::Attr{$_[0]} if @_ == 1;
+
+    croak "number of attributes must be even" if @_ % 2;
+
+    while( my ( $k, $v ) = splice @_, 0, 2 ) {
+        if ( $k =~ s/^\+// ) {
+            $Template::Caribou::Attr{$k} .= ' '. $v;
+        }
+        else {
+            $Template::Caribou::Attr{$k} = $v;
+        }
+    }
+
+    return;
+}
+
 
 sub _generate_mytag {
     my ( undef, undef, $arg ) = @_;
@@ -144,7 +216,7 @@ sub _generate_mytag {
 
     return sub :prototype(&) {
         my $inner = shift;
-        render_tag( $tagname, $inner, $groom );
+        render_tag( $tagname, $inner, $groom, $arg->{indent}//1 );
     }
 }
 
@@ -179,7 +251,11 @@ attributes of the tag, and its inner content will be passed to it as C<%_> and C
 =cut
 
 sub render_tag {
-    my ( $tag, $inner_sub, $groom ) = @_;
+    my ( $tag, $inner_sub, $groom, $indent ) = @_;
+
+    $indent //= 1;
+
+    local $Template::Caribou::TAG_INDENT_LEVEL = $indent ? $Template::Caribou::TAG_INDENT_LEVEL : 0;
 
     my $sub = ref $inner_sub eq 'CODE' ? $inner_sub : sub { $inner_sub };
 

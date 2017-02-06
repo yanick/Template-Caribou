@@ -11,7 +11,7 @@ open ::RAW, '>', \my $raw;
 for my $tag ( qw/
         p html head h1 h2 h3 h4 h5 h6 body emphasis div
         sup
-        style title span li ol ul i b bold a 
+        style title span li ol ul i b strong a 
         label link img section article
         table thead tbody th td
         fieldset legend form input select option button

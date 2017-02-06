@@ -138,9 +138,7 @@ use Path::Tiny;
 use Template::Caribou::Tags;
 
 
-use List::AllUtils qw/ uniq /;
-
-use Template::Caribou::Types qw/ Formatter /;
+use List::AllUtils qw/ uniq any /;
 
 use Moose::Exporter;
 Moose::Exporter->setup_import_methods(
@@ -171,6 +169,10 @@ sub template {
 
         $class = $self->meta;
     }
+
+    carp "redefining '$name'" 
+        if $class->can('get_all_method_names') and any { $name eq $_ } $class->get_all_method_names;
+    carp "redefining '$name'" if $class->name->can($name);
 
 
     $class->add_method( $name => sub {
@@ -267,13 +269,6 @@ will be prepended to the name, unless it begins with a '+'.
 Returns C<true> if the object has a formatter.
 
 =cut
-
-has formatter => (
-    isa => Formatter,
-    coerce => 1,
-    is => 'rw',
-    predicate => 'has_formatter',
-);
 
 =method import_template_dir( $directory )
 

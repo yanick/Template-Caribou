@@ -13,6 +13,6 @@ ok $bou->can( "usecase_1" ), 'template loaded';
 
 my $output = $bou->usecase_1;
 
-like $output => qr#^<html>\n\s{2}<head>#, "nicely formatted";
+like $output => qr#^<html>\n\s{2}<head>#m, "nicely formatted";
 
 done_testing;

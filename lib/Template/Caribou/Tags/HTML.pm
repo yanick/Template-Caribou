@@ -39,24 +39,30 @@ use warnings;
 use parent 'Exporter::Tiny';
 
 our @EXPORT;
+our @UNFORMATED_TAGS;
+our @FORMATED_TAGS;
 
 BEGIN {
-    @EXPORT = @Template::Caribou::Tags::HTML::TAGS =  qw/
-        p html head h1 h2 h3 h4 h5 h6 body emphasis div
-        sup
-        style title span li ol ul i b bold a 
+@UNFORMATED_TAGS = qw/ i emphasis b strong span small sup /;
+@FORMATED_TAGS = qw/
+        p html head h1 h2 h3 h4 h5 h6 body div
+        style title li ol ul a 
         label link img section article
         table thead tbody th td
         fieldset legend form input select option button
-        small
         textarea
-    /;
+/;
+}
+
+BEGIN {
+
+    @EXPORT = @Template::Caribou::Tags::HTML::TAGS =  ( @UNFORMATED_TAGS, @FORMATED_TAGS );
     push @EXPORT, 'table_row';
 }
 
 use Template::Caribou::Tags
     mytag => { -as => 'table_row', tag => 'tr' },
-    map { ( mytag => { -as => $_, tag => $_ } ) }
-        @Template::Caribou::Tags::HTML::TAGS;
+    ( map { ( mytag => { -as => $_, tag => $_ } ) } @FORMATED_TAGS ),
+    ( map { ( mytag => { -as => $_, tag => $_, indent => 0 } ) } @UNFORMATED_TAGS );
 
 1;

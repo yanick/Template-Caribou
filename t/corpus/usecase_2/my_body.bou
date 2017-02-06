@@ -1,8 +1,5 @@
-html {
-    head {
-        title { return 'YarnLine' };
-    };
-    body {
+sub {
+body {
         h1 { 'Yarnline' };
 
 p { qq{
@@ -14,7 +11,7 @@ div {
     attr align => 'center';
 };
 
-p { print qq{ How to use it? Dirt simple: click on the ' };
+p { print qq{ How to use it? Dirt simple: click on the '};
     i{ 'authenticate' };  
     print qq{ button below, confirms that you'll allow this app to do its thing (we're only peeking
 in project lists and not doing anything else, I swear) and... voilà. To
@@ -35,4 +32,3 @@ div {
 
 };
 }
-
