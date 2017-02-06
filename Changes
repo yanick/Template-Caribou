@@ -2,6 +2,7 @@ Revision history for Template-Caribou
 
 {{$NEXT}}
  [API CHANGES]
+ - Maaaaaaassive refactoring/revisit of the API.
 
  [MISC]
  - Switch from using Method::Signatures to perl 5.20's 'signatures'.

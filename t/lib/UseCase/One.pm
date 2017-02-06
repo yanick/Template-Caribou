@@ -3,16 +3,12 @@ package UseCase::One;
 use strict;
 use warnings;
 
-use Moose;
+use Template::Caribou;
 
-use Template::Caribou::Utils;
-use Template::Caribou::Tags qw/ attr /;
-use Template::Caribou::Tags::HTML qw/ :all /;
-
-with 'Template::Caribou';
+use Template::Caribou::Tags::HTML ':all';
 
 with 'Template::Caribou::Files' => {
-    dirs => [ 't/corpus' ],
+    intro => [ 'use strict; use 5.10.0;' ],
 };
 
 1;

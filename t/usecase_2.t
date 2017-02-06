@@ -7,13 +7,8 @@ use UseCase::Two;
 
 use Test::More;
 
-my $bou = UseCase::Two->new( 
-    formatter => '+Twig',
-);
+my $bou = UseCase::Two->new;
 
-is_deeply [ sort $bou->all_templates ] => [ qw/ body head page / ], "template names"
-    or diag explain [ sort $bou->all_templates ];
-
-note $bou->render('page');
+like $bou->page => qr/<head>\s+<title>/;
 
 done_testing;

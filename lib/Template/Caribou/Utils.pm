@@ -1,25 +1,34 @@
 package Template::Caribou::Utils;
+# ABSTRACT: internal utilities for Template::Caribou
+
+=head1 DESCRIPTION
+
+Used internally by L<Template::Caribou>. Nothing interesting
+for end-users.
+
+=cut
 
 use strict;
 use warnings;
 no warnings qw/ uninitialized /;
 
-use Carp;
-
-use Moose;
-
 BEGIN {
     *::RAW = *::STDOUT;
 }
 
+use parent 'Exporter::Tiny';
 
-__PACKAGE__->meta->make_immutable;
+use experimental 'signatures';
+
+use Carp;
+
 
 package
     Template::Caribou::String;
 
 use overload 
-    '""' => sub { return ${$_[0] } };
+    '""' => sub { return ${$_[0] } },
+    'eq' => sub { ${$_[0]} eq $_[1] };
 
 sub new { my ( $class, $string ) = @_;  bless \$string, $class; }
 

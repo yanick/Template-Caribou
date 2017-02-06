@@ -5,44 +5,42 @@ use 5.10.0;
 
 use Test::More;
 
-use Test::Routine;
-use Test::Routine::Util;
-
 use Template::Caribou;
 use Template::Caribou::Tags qw/ render_tag /;
 
-with 'Template::Caribou';
+use experimental 'signatures';
+
+has '+indent' => ( default => 0 );
+
+my $self = __PACKAGE__->new;
 
 template inner_tmpl => sub {
+    warn 'inner here';
     'hello world';
 };
 
-template outer => sub {
+template outer => sub($self) {
     print 'x';
-    show( 'inner_tmpl' );
+    $self->inner_tmpl;
     print 'x';
 };
 
-test 'inner_tmpl' => sub {
-    my $self = shift;
-
-    is $self->render('inner_tmpl') => 'hello world';
+subtest 'inner_tmpl' => sub {
+    is $self->inner_tmpl => 'hello world';
 };
 
-test 'outer' => sub {
-    my $self = shift;
-
-    is $self->render('outer') => 'xhello worldx';
+$::NOW = 1;
+subtest 'outer' => sub {
+    is $self->outer => 'xhello worldx';
 };
 
-sub foo(&) { render_tag( 'foo', shift ) }
-sub bar(&) { render_tag( 'bar', shift ) }
+sub foo :prototype(&) { render_tag( 'foo', shift ) }
+sub bar :prototype(&) { render_tag( 'bar', shift ) }
 
 template 'escape_outer' => sub {
+    my $self = shift;
     foo {};
-    foo {
-        show( 'escape_inner' );
-    };
+    foo { $self->escape_inner; };
     foo {};
 };
 
@@ -50,23 +48,19 @@ template 'escape_inner' => sub {
     bar { '<yay>' };
 };
 
-test 'escaping' => sub {
-    my $self = shift;
-
-    is $self->render('escape_outer') 
+subtest 'escaping' => sub {
+    is $self->escape_outer
         => qq{<foo /><foo><bar>&lt;yay></bar></foo><foo />};
-
 };
 
 template 'end_show' => sub {
     foo { };
-    show( 'inner_tmpl' );
+    $_[0]->inner_tmpl;
+    return;
 };
 
-test 'end_show' => sub {
-    my $self = shift;
-
-    is $self->render( 'end_show' ) => '<foo />hello world';
+subtest 'end_show' => sub {
+    is $self->end_show => '<foo />hello world';
 };
 
 template 'attributes' => sub {
@@ -80,16 +74,12 @@ template 'attributes' => sub {
     }
 };
 
-test attributes => sub {
-    my $self = shift;
-
-    is $self->render( 'attributes' ) => 
+subtest attributes => sub {
+    is $self->attributes => 
         '<foo foo="bar">bar</foo><foo a="1 3" b="4" />';
 };
 
-test "print vs  say" => sub {
-    my $self = shift;
-
+subtest "print vs say" => sub {
     TODO: {
         local $TODO = "Perl bug, should be fixed in 5.18";
 
@@ -102,5 +92,4 @@ test "print vs  say" => sub {
     }
 };
 
-run_me;
 done_testing;

@@ -1,80 +1,97 @@
 package Template::Caribou::Tags;
 #ABSTRACT: generates tags functions for Caribou templates
 
+
 use strict;
 use warnings;
 
 use Carp;
 
-use Template::Caribou::Utils;
+use Template::Caribou::Role;
 
-use Sub::Exporter -setup => {
-    exports => [
-        qw/ attr render_tag /,
-        mytag => \&_gen_generic_tag,
-    ],
-    groups => { default => [ 'attr' ] },
-};
+use parent 'Exporter::Tiny';
+use experimental 'signatures';
 
-sub _gen_generic_tag {
-    my ( undef, undef, $arg ) = @_;
 
-    my $groom = $arg->{groom} || sub {
-        my( $attr ) = @_;
-        $attr->{class} ||= $arg->{class} if $arg->{class};
-        if ( $arg->{attr} ) {
-            $attr->{$_} ||= $arg->{attr}{$_} for keys %{ $arg->{attr} };
-        }
-    };
+our @EXPORT_OK = qw/ render_tag mytag attr /;
 
-    return sub(&) {
-        my $inner = shift;
-        render_tag( $arg->{name} || 'div', $inner, $groom );
-    }
-}
 
 sub attr(@){
-    return $Template::Caribou::attr{$_[0]} if @_ == 1;
+    return $Template::Caribou::Attr{$_[0]} if @_ == 1;
 
     croak "number of attributes must be even" if @_ % 2;
 
     while( my ( $k, $v ) = splice @_, 0, 2 ) {
         if ( $k =~ s/^\+// ) {
-            $Template::Caribou::attr{$k} .= ' '. $v;
+            $Template::Caribou::Attr{$k} .= ' '. $v;
         }
         else {
-            $Template::Caribou::attr{$k} = $v;
+            $Template::Caribou::Attr{$k} = $v;
         }
     }
 
     return;
 }
 
-sub render_tag {
-    my ( $tag, $inner_sub, $groom ) = @_;
 
-    my $inner;
-    my %attr;
+sub _generate_mytag {
+    my ( undef, undef, $arg ) = @_;
 
-    {
-        no warnings qw/ uninitialized /;
+    $arg->{'-as'} ||= $arg->{tag}
+        or die "mytag needs to be given '-as' or 'name'\n";
 
-        local *STDOUT;
-        local *::RAW;
-        local $Template::Caribou::OUTPUT;
-        local %Template::Caribou::attr;
-        tie *STDOUT, 'Template::Caribou::Output';
-        tie *::RAW, 'Template::Caribou::OutputRaw';
+    my $tagname = $arg->{tag} || 'div';
 
-        my $res = ref $inner_sub ? $inner_sub->() : $inner_sub;
+    my $groom = sub {
+        $_{class} ||= $arg->{class} if $arg->{class};
 
-        $inner = $Template::Caribou::OUTPUT 
-            || ( ref $res ? $res : Template::Caribou::Output::escape( $res ) );
+        $_{$_} ||= $arg->{attr}{$_} for eval { keys %{ $arg->{attr} } };
 
-        %attr = %Template::Caribou::attr;
+        $arg->{groom}->() if $arg->{groom};
+    };
+
+    return sub :prototype(&) {
+        my $inner = shift;
+        render_tag( $tagname, $inner, $groom, $arg->{indent}//1 );
     }
+}
 
-    $groom->( \%attr, \$inner ) if $groom;
+
+sub render_tag {
+    my ( $tag, $inner_sub, $groom, $indent ) = @_;
+
+    $indent //= 1;
+
+    local $Template::Caribou::TAG_INDENT_LEVEL = $indent ? $Template::Caribou::TAG_INDENT_LEVEL : 0;
+
+    my $sub = ref $inner_sub eq 'CODE' ? $inner_sub : sub { $inner_sub };
+
+    # need to use the object for calls to 'show'
+    my $bou = $Template::Caribou::TEMPLATE || Moose::Meta::Class->create_anon_class(
+        roles => [ 'Template::Caribou::Role' ] 
+    )->new_object;
+
+    local %Template::Caribou::Attr;
+
+    my $inner = do {
+        local $Template::Caribou::TAG_INDENT_LEVEL = $Template::Caribou::TAG_INDENT_LEVEL;
+
+        $Template::Caribou::TAG_INDENT_LEVEL++
+            if $Template::Caribou::TAG_INDENT_LEVEL // $bou->indent;
+
+        $bou->get_render($sub);
+    };
+
+    my %attr = %Template::Caribou::Attr;
+
+    if ( $groom ) {
+        local $_ = "$inner";  # stringification required in case it's an object
+        local %_ = %attr;
+
+        $groom->();
+
+        ($inner,%attr) = ( $_, %_ );
+    }
 
     my $attrs;
     for( sort keys %attr ) {
@@ -83,12 +100,21 @@ sub render_tag {
     }
 
     no warnings qw/ uninitialized /;
-    my $output = $inner 
-        ? Template::Caribou::String->new( "<${tag}$attrs>$inner</$tag>" ) 
-        : Template::Caribou::String->new( "<${tag}$attrs />" ) 
+
+    my $prefix = !!$Template::Caribou::TAG_INDENT_LEVEL 
+        && "\n" . ( '  ' x $Template::Caribou::TAG_INDENT_LEVEL );
+
+    my $output = length($inner) 
+        ? Template::Caribou::String->new( "$prefix<${tag}$attrs>$inner$prefix</$tag>" ) 
+        : Template::Caribou::String->new( "$prefix<${tag}$attrs />" ) 
         ;
-    print ::RAW $output;
-    return $output;
+
+    return print_raw( $output );
+}
+
+sub print_raw($text) {
+    print ::RAW $text;
+    return $text; 
 }
 
 1;

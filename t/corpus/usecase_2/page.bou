@@ -1,6 +1,6 @@
-html {
-    $self->render('head');
-    $self->render('body');
-    '';
+sub {
+    my $self = shift;
+    $self->my_head;
+    $self->my_body;
 }
 

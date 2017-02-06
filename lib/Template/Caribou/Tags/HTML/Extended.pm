@@ -1,51 +1,51 @@
 package Template::Caribou::Tags::HTML::Extended;
 # ABSTRACT: custom HTML tags optimized for DWIMery
 
+
 use strict;
 use warnings;
 
 use Carp;
 
-use Template::Caribou::Tags ':all';
+use Template::Caribou::Tags qw/ render_tag attr /;
+use Class::Load qw/ load_class /;
 
 use experimental 'signatures';
 
-use Sub::Exporter -setup => {
-    exports => [qw/ css anchor image markdown javascript javascript_include submit
+use parent 'Exporter::Tiny';
+
+our @EXPORT = qw/
+    css anchor image markdown javascript javascript_include submit
     less css_include doctype
     favicon
-    /],
-    groups => { default => ':all' },
-};
+
+/;
 
 =head2 doctype $type
 
+    doctype 'html5';
+    # <!DOCTYPE html>
+
 Prints the doctype declaration for the given type. 
 
-For the moment, only I<html 5> is supported as a type.
+For the moment, only I<html 5> (or I<html5>) is supported as a type.
 
 =cut
 
-sub doctype($) {
-    my $type = shift;
-
-    if ( $type eq 'html 5' ) {
-        print ::RAW "<!DOCTYPE html>\n";
-        return;
+sub doctype($type="html 5") {
+    if ( $type =~ /^html\s?5/ ) {
+        return Template::Caribou::Tags::print_raw( "<!DOCTYPE html>\n" );
     }
 
-    die "type '$type' not supported";
+    croak "type '$type' not supported";
 }
 
 =head2 favicon $url
 
-Generates the favicon tag.
+Generates a favicon link tag.
 
     favicon 'my_icon.png';
-
-will generates
-
-    <link rel="shortcut icon" href="my_icon.png" />
+    # <link rel="shortcut icon" href="my_icon.png" />
 
 =cut
 
@@ -60,37 +60,32 @@ sub favicon($) {
 
 =head2 submit $value, %attr
 
+    submit 'foo';
+    # <input type="submit" value="foo" />
+
 Shortcut for
 
-    input { attr type => submit, value => 'value', %attr; }
-
-If you don't want I<value> to be passed, the first argument might be
-set to I<undef>.
+    input { attr type => submit, value => $value, %attr; }
 
 =cut
 
-sub submit(@) {
-    my( $value, %attr ) = @_;
+sub submit($value=undef, %attr) {
 
     render_tag( 'input', '', sub {
-        $_[0]->{type} = 'submit';
-        $_[0]->{value} = $value if $value;
-        $_[0]->{$_} = $attr{$_} for keys %attr;
+        $_{type} = 'submit';
+        $_{value} = $value if $value;
+        $_{$_} = $attr{$_} for keys %attr;
     });
 }
 
 =head2 less $script
 
-Compile the LESS script into CSS.
+Compiles the LESS script into CSS. Requires L<CSS::LESSp>.
 
 =cut
 
-sub less($) {
-    my $text = shift;
-
-    require CSS::LESSp;
-
-    my $css = join '', CSS::LESSp->parse($text);
+sub less($text) {
+    my $css = join '', load_class('CSS::LESSp')->parse($text);
 
     css($css);
 }
@@ -98,14 +93,16 @@ sub less($) {
 
 =head2 javascript $script
 
+    javascript q{ console.log( "Hello there!" ) };
+    # <script type="text/javascript">console.log( "Hello there!" )</script>
+
 Shortcut for 
 
     <script type="text/javascript>$script</script>
 
 =cut
 
-sub javascript($) {
-    my $script = shift;
+sub javascript($script) {
     render_tag( 'script', sub {
         attr type => 'text/javascript';
         print ::RAW $script;
@@ -130,9 +127,11 @@ sub javascript_include($) {
     });
 }
 
-=head2 css_include
-<link href="public/bootstrap/css/bootstrap.min.css" rel="stylesheet"
-        media="screen" />
+=head2 css_include $url, %args
+
+    css_include 'public/bootstrap/css/bootstrap.min.css', media => 'screen';
+    # <link href="public/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+    #       media="screen" />
 
 =cut
 
@@ -178,11 +177,14 @@ is equivalent to
 
 sub anchor($href,$inner) {
     render_tag( 'a', $inner, sub {
-        $_[0]->{href} ||= $href;
+        $_{href} ||= $href;
     });
 }
 
-=head2 image $src, @attr
+=head2 image $src, %attr
+
+    image 'kitten.jpg';
+    # <img src="kitten.jpg" />
 
 Shortcut for <img>.
 
@@ -195,7 +197,7 @@ sub image($src,%attr) {
     $attr{src} = $src;
 
     render_tag( 'img', '', sub {
-        $_[0]->{$_} = $attr{$_} for keys %attr;
+        $_{$_} = $attr{$_} for keys %attr;
     } );
 }
 
@@ -212,7 +214,9 @@ sub markdown($){
 
     return unless length $_[0];
 
-    print ::RAW Text::MultiMarkdown::markdown(shift);
+    my $value = Text::MultiMarkdown::markdown(shift);
+
+    print ::RAW $value;
 }
 
 1;
@@ -250,5 +254,5 @@ __END__
 
 =head1 DESCRIPTION
 
-I<Template::Caribou::Tags::HTML::Extended> provides utility tags that provides 
-shortcuts for typical HTML constructs.
+Whereas L<Template::Caribou::Tags::HTML> offers straight function equivalents to their
+HTML tags, this module provides a more DWIM interface, and shortcut for often used patterns.
