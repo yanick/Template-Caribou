@@ -27,7 +27,7 @@ Exports tag blocks for regular HTML tags.
 
 =head1 TAG FUNCTIONS EXPORTED
 
-p html head h1 h2 h3 h4 h5 h6 body emphasis div sup style title span li ol ul i b bold a label link img section article table thead tbody th td table_row fieldset legend form input select option button small textarea 
+p html head h1 h2 h3 h4 h5 h6 body emphasis div sup style title span li ol ul i b strong a label link img section article table thead tbody th td table_row fieldset legend form input select option button small textarea 
 
 All function names are the same than their tag name, except for C<table_row>, which is for C<tr> (which is an already taken Perl keyword).
 

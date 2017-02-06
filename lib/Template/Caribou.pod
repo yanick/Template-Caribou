@@ -9,15 +9,18 @@
     has name => ( is => 'ro' );
 
     template page => sub {
+        my $self = shift;
+
         html { 
             head { 
                 title { 'Example' } 
             };
-            show( 'body' );
+            
+            $self->my_body;
         }
     };
 
-    template body => sub {
+    template my_body => sub {
         my $self = shift;
 
         body { 
@@ -28,7 +31,7 @@
     package main;
 
     my $template = MyTemplate->new( name => 'Yanick' );
-    print $template->render('page');
+    print $template->page;
 
 =head1 DESCRIPTION
 
@@ -44,18 +47,7 @@ L<Template::Caribou::Manual>.
 
 When C<use>d within a namespace, C<Template::Caribou> will apply the role L<Template::Caribou::Role>
 to it (and auto-turn the namespace into Moose class if it wasn't a Moose class or role already),
-as well as import the keywords C<show>, C<attr> and C<template> from L<Template::Caribou::Tags>
-and L<Template::Caribou::Utils>. 
-
-In other words,
-
-    use Template::Caribou;
-
-is roughly equivalent to
-
-    with 'Template::Caribou::Role';
-
-    use Template::Caribou::Utils qw/ show template /;
-    use Template::Caribou::Tags  qw/ attr /;
+as well as import the keywords C<template> and C<attr> (the latter from
+L<Template::Caribou::Tags>), as well as load L<Template::Caribou::Utils>.
 
 =cut

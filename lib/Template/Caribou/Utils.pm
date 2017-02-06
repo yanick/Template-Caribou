@@ -1,4 +1,12 @@
 package Template::Caribou::Utils;
+# ABSTRACT: internal utilities for Template::Caribou
+
+=head1 DESCRIPTION
+
+Used internally by L<Template::Caribou>. Nothing interesting
+for end-users.
+
+=cut
 
 use strict;
 use warnings;
