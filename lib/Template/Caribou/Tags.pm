@@ -9,24 +9,28 @@ use Carp;
 
 use Template::Caribou::Role;
 
+use List::AllUtils qw/ pairmap /;
+
 use parent 'Exporter::Tiny';
-use experimental 'signatures';
+use experimental 'signatures', 'postderef';
 
 
 our @EXPORT_OK = qw/ render_tag mytag attr /;
 
 
 sub attr(@){
-    return $Template::Caribou::Attr{$_[0]} if @_ == 1;
+    return $_{$_[0]} if @_ == 1;
 
     croak "number of attributes must be even" if @_ % 2;
 
     while( my ( $k, $v ) = splice @_, 0, 2 ) {
         if ( $k =~ s/^\+// ) {
-            $Template::Caribou::Attr{$k} .= ' '. $v;
+            $_{$k} = join ' ', sort keys $_{$k}->%*
+                if ref $_{$k};
+            $_{$k} .= ' '. $v;
         }
         else {
-            $Template::Caribou::Attr{$k} = $v;
+            $_{$k} = $v;
         }
     }
 
@@ -71,7 +75,7 @@ sub render_tag {
         roles => [ 'Template::Caribou::Role' ] 
     )->new_object;
 
-    local %Template::Caribou::Attr;
+    local %_;
 
     my $inner = do {
         local $Template::Caribou::TAG_INDENT_LEVEL = $Template::Caribou::TAG_INDENT_LEVEL;
@@ -82,22 +86,18 @@ sub render_tag {
         $bou->get_render($sub);
     };
 
-    my %attr = %Template::Caribou::Attr;
-
     if ( $groom ) {
         local $_ = "$inner";  # stringification required in case it's an object
-        local %_ = %attr;
 
         $groom->();
 
-        ($inner,%attr) = ( $_, %_ );
+        $inner = $_;
     }
 
-    my $attrs;
-    for( sort keys %attr ) {
-        # TODO deal with the quotes
-        $attrs .= qq{ $_="$attr{$_}"};
-    }
+    my $attrs = join ' ', '',
+        pairmap { qq{$a="$b"} }
+        map { $_ => ref $_{$_} ? join ' ', sort keys %{$_{$_}} : $_{$_} }  
+        sort keys %_;
 
     no warnings qw/ uninitialized /;
 

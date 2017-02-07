@@ -3,7 +3,7 @@ use warnings;
 
 use Test::More tests => 9;
 
-use Template::Caribou::Tags qw/ render_tag /;
+use Template::Caribou::Tags qw/ render_tag attr /;
 
 local *::RAW;
 open ::RAW, '>', \my $raw;
@@ -62,4 +62,26 @@ subtest 'without indentation' => sub {
             }
         } 
     => qr/<div><div>one/;
+};
+
+subtest 'attributes via %_' => sub {
+    is render_tag( foo => sub {
+            $_{foo} = 'bar';
+            return;
+    }) => '<foo foo="bar" />';
+
+    is render_tag( foo => sub {
+            $_{class}{one} = 1;
+            $_{class}{two} = 1;
+            return;
+    }) => '<foo class="one two" />',
+        'class as hash';
+
+    is render_tag( foo => sub {
+            $_{class}{one} = 1;
+            $_{class}{two} = 1;
+            attr '+class' => 'three';
+            return;
+    }) => '<foo class="one two three" />',
+        'class as hash *and* attr';
 };
