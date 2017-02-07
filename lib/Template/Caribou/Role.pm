@@ -107,6 +107,11 @@ sub _render ($self, $method, @args) {
     local $Template::Caribou::IN_RENDER = 1;
     local $Template::Caribou::OUTPUT;
 
+    unless(ref $method) {
+        $method = $self->can($method)
+            or die "no template named '$method' found\n";
+    }
+
     local *STDOUT;
     local *::RAW;
     tie *STDOUT, 'Template::Caribou::Output';

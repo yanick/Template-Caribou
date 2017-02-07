@@ -8,6 +8,7 @@ Revision history for Template-Caribou
   [ DOCUMENTATION ]
 
   [ ENHANCEMENTS ]
+  - render can take a template name as well.
 
   [ NEW FEATURES ]
 
