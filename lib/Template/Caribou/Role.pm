@@ -93,8 +93,6 @@ sub render {
     $output = Template::Caribou::String->new( $output ) 
         if $Template::Caribou::IN_RENDER;
 
-    $DB::single = $::NOW;
-    
     # called in a void context and inside a template => print it
     print ::RAW $output if $Template::Caribou::IN_RENDER;
 

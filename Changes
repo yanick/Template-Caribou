@@ -9,6 +9,7 @@ Revision history for Template-Caribou
 
   [ ENHANCEMENTS ]
   - render can take a template name as well.
+  - put back 'show' to be backward-friendly(ish)
 
   [ NEW FEATURES ]
 

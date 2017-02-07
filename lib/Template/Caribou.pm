@@ -10,11 +10,22 @@ use Template::Caribou::Tags qw/ attr /;
 
 Moose::Exporter->setup_import_methods(
     with_meta => [ 'template' ],
-    as_is     => [ 'attr' ],
+    as_is     => [ 'attr', 'show' ],
     also      => [ 'Template::Caribou::Role' ],
 );
 
 use Moose::Util qw/ apply_all_roles /;
+
+use 5.10.0;
+
+sub show {
+    state $shown_warning = 0;
+
+    carp 'show() is deprecated, use $bou->my_template instead'
+        unless $shown_warning++;
+
+    $Template::Caribou::TEMPLATE->render(@_);
+}
 
 sub init_meta {
     my $class = shift;
