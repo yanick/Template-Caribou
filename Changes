@@ -1,20 +1,13 @@
 Revision history for Template-Caribou
 
-{{$NEXT}}
-  [ API CHANGES ]
-
-  [ BUG FIXES ]
-
-  [ DOCUMENTATION ]
-
+1.1.0 2017-02-08
   [ ENHANCEMENTS ]
-  - render can take a template name as well.
-  - put back 'show' to be backward-friendly(ish)
-  - can now use %_ as well as 'attr'
-
-  [ NEW FEATURES ]
+    - render can take a template name as well.
+    - put back 'show' to be backward-friendly(ish)
+    - can now use %_ as well as 'attr'
 
   [ STATISTICS ]
+    - code churn: 11 files changed, 200 insertions(+), 73 deletions(-)
 
 1.0.0 2017-02-06
   [ API CHANGES ]
