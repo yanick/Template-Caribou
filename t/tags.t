@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 9;
+use Test::More tests => 10;
 
 use Template::Caribou::Tags qw/ render_tag attr /;
 
@@ -79,9 +79,26 @@ subtest 'attributes via %_' => sub {
 
     is render_tag( foo => sub {
             $_{class}{one} = 1;
+            $_{class}{two} = 0;
+            return;
+    }) => '<foo class="one" />',
+        'class as hash with a false value';
+
+    is render_tag( foo => sub {
+            $_{class}{one} = 1;
             $_{class}{two} = 1;
             attr '+class' => 'three';
             return;
-    }) => '<foo class="one two three" />',
+    }) => '<foo class="one three two" />',
+        'class as hash *and* attr';
+
+    is render_tag( foo => sub {
+            attr class => 'potato mosquito';
+            attr '+class' => 'tomato';
+            $_{class}{avocado}++;
+            delete $_{class}{avocado};
+            attr '-class' => 'mosquito';
+            return;
+    }) => '<foo class="potato tomato" />',
         'class as hash *and* attr';
 };

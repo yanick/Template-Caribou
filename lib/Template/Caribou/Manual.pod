@@ -223,10 +223,24 @@ Tags, of course, can be used within one another:
     };
 
 
-Attributes for the tag are set via the 'attr()' function, which can
-appear anywhere within the inner template.
+Attributes for the tag are set via C<%_> or the 'attr()' function,
+which can appear anywhere within the inner template.
 
     use Template::Caribou::Tags::HTML qw/ div /;
+
+    template inner => sub {
+        div {
+            $_{id} = 'inner',
+            $_{class}{'main-div'} = 1;
+
+            div {
+                "some inner div";
+            };
+
+        };
+    };
+
+    # or, equivalently
 
     template inner => sub {
         div {
@@ -242,6 +256,11 @@ appear anywhere within the inner template.
 
     # will output
     #   <div id="inner" class="main-div"><div>some inner div</div></div>
+
+C<%_> takes attribute name/value pairs. If the value is a hashref,
+then the final attribute value will be the concatenated list
+of the keys with true values. Which is mostly useful for the C<class> attribute,
+where you can toggle the different classes.
 
 =head2 L<Template::Caribou::Tags>
 

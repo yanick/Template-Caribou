@@ -9,7 +9,7 @@ use Carp;
 
 use Template::Caribou::Role;
 
-use List::AllUtils qw/ pairmap /;
+use List::AllUtils qw/ pairmap pairgrep /;
 
 use parent 'Exporter::Tiny';
 use experimental 'signatures', 'postderef';
@@ -23,11 +23,19 @@ sub attr(@){
 
     croak "number of attributes must be even" if @_ % 2;
 
+    no warnings 'uninitialized';
     while( my ( $k, $v ) = splice @_, 0, 2 ) {
         if ( $k =~ s/^\+// ) {
-            $_{$k} = join ' ', sort keys $_{$k}->%*
-                if ref $_{$k};
-            $_{$k} .= ' '. $v;
+            $_{$k} = { map { $_ => 1 } split ' ', $_{$k} }
+                unless ref $_{$k};
+
+            $_{$k}{$v} = 1;
+        }
+        elsif ( $k =~ s/^-// ) {
+            $_{$k} = { map { $_ => 1 } split ' ', $_{$k} }
+                unless ref $_{$k};
+
+            delete $_{$k}{$v};
         }
         else {
             $_{$k} = $v;
@@ -47,7 +55,19 @@ sub _generate_mytag {
     my $tagname = $arg->{tag} || 'div';
 
     my $groom = sub {
-        $_{class} ||= $arg->{class} if $arg->{class};
+        
+        no warnings 'uninitialized';
+
+        if( my $defaults = $arg->{classes} || $arg->{class} ) {
+            $_{class} = { map { $_ => 1 } split ' ', $_{class} }
+                unless ref $_{class};
+            if( ref $defaults ) {
+                $_{class}{$_} //= 1 for @$defaults;
+            }
+            else {
+                $_{class}{$_} //=  1 for split ' ', $defaults;
+            }
+        }
 
         $_{$_} ||= $arg->{attr}{$_} for eval { keys %{ $arg->{attr} } };
 
@@ -95,9 +115,12 @@ sub render_tag {
     }
 
     my $attrs = join ' ', '',
-        pairmap { qq{$a="$b"} }
-        map { $_ => ref $_{$_} ? join ' ', sort keys %{$_{$_}} : $_{$_} }  
-        sort keys %_;
+        pairmap { (  qq{$a="$b"} ) x (length $b > 0) }
+        map { 
+            $_ => ref $_{$_} 
+                ? join ' ', sort { $a cmp $b } pairmap { $a } pairgrep { $b } $_{$_}->%* 
+                : $_{$_} 
+        }  grep { defined $_{$_} } sort keys %_;
 
     no warnings qw/ uninitialized /;
 

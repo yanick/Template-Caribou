@@ -89,13 +89,18 @@ value of the C<tag> argument. At least one of C<-as> or C<tag> must be given exp
 
 Grooming function for the tag block. See C<render_tag> for more details.
 
-=item class => $classes
+=item classes => \@classes
 
-Default value for the 'class' attribute of the tag.
+Default value for the 'class' attribute of the tag. 
 
     use Template::Caribou::Tags 
                     # <div class="main">...</div>
-        mytag => { -as => 'main_div', class => 'main' };
+        mytag => { -as => 'main_div', classes => [ 'main' ] };
+
+If you want to remove a default class from the tag,
+set its value to C<0> in C<%_>. E.g.,
+
+    main_div { $_{class}{main} = 0; ... };
 
 
 =item attr => \%attributes
@@ -110,6 +115,8 @@ Default set of attributes for the tag.
 
 
 =function attr( $name => $value )
+
+I recommend you use C<%_> directly instead.
 
 Accesses the attributes of a tag within its block.
 
@@ -136,18 +143,21 @@ Many calls to C<attr> can be done within the same block.
 
     # <div class="foo" style="text-align: center">hi there</div>
   
-To add to an attribute instead of replacing its value, prefix the attribute name
-with a plus sign.
+To add/remove to an attribute instead of replacing its value, prefix the attribute name
+with a plus or minus sign. Doing either will automatically 
+turn the value in C<%_> to a hashref.
 
     div {
-        attr class    => 'foo';
+        attr class    => 'foo baz';
 
         attr '+class' => 'bar';
+        attr '-class' => 'baz';
 
         "hi there";
     };
 
     # <div class="foo bar">hi there</div>
+
    
 The value of an attribute can also be queried by passing a single argument to C<attr>.
 
