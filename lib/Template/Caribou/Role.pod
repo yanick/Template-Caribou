@@ -181,16 +181,31 @@ function/method in the namespace.
 Creates an anonymous class inheriting from the current one and builds an object instance
 with the given arguments. Useful when wanting to define templates for one specific instance.
 
-=method render( $coderef, @template_args )
+=method render
 
-Renders the given C<$coderef> as a template, passing it the C<@template_args>, and returns 
-its generated output. 
+    $bou->render( $coderef, @template_args );
+    $bou->render( $template_name, @template_args );
+
+Renders the given C<$coderef> as a template, passing it the C<@template_args>, and returns its generated output. 
 
     print $bou->render( sub {
         my( $self, $name ) = @_;
 
         'hi ' . $name . "\n";
     }, $_ ) for @friends; 
+
+The template can also be given by name.
+
+    template foo => sub { ... };
+
+    # later on
+
+    $bou->render( 'foo', @args );
+
+    # which is equivalent to
+
+    $bou->foo(@args);
+
 
 =method get_render
 

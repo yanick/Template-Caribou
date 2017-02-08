@@ -8,6 +8,9 @@ Revision history for Template-Caribou
   [ DOCUMENTATION ]
 
   [ ENHANCEMENTS ]
+  - render can take a template name as well.
+  - put back 'show' to be backward-friendly(ish)
+  - can now use %_ as well as 'attr'
 
   [ NEW FEATURES ]
 
