@@ -8,8 +8,6 @@ use Template::Caribou::Tags qw/ render_tag attr /;
 local *::RAW;
 open ::RAW, '>', \my $raw;
 
-local $TODO = "attribute quotes aren't dealt with smartly";
-
 unlike  render_tag( 'div', sub { attr stuff => '"'  } ) => qr/"""/,
     'attribute with double quote';
 like  render_tag( 'div', sub { attr stuff => "'"  } ) => qr/"'"/,

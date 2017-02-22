@@ -11,6 +11,7 @@ use Template::Caribou::Role;
 
 use parent 'Exporter::Tiny';
 use experimental 'signatures';
+use XML::Writer;
 
 
 our @EXPORT_OK = qw/ render_tag mytag attr /;
@@ -68,7 +69,7 @@ sub render_tag {
 
     # need to use the object for calls to 'show'
     my $bou = $Template::Caribou::TEMPLATE || Moose::Meta::Class->create_anon_class(
-        roles => [ 'Template::Caribou::Role' ] 
+        roles => [ 'Template::Caribou::Role' ]
     )->new_object;
 
     local %Template::Caribou::Attr;
@@ -93,28 +94,33 @@ sub render_tag {
         ($inner,%attr) = ( $_, %_ );
     }
 
-    my $attrs;
-    for( sort keys %attr ) {
-        # TODO deal with the quotes
-        $attrs .= qq{ $_="$attr{$_}"};
-    }
+    # Setting UNSAFE here so that the inner can be written with raw
+    # as we don't want inner to be escaped as it is already escaped
+    my $writer = XML::Writer->new(OUTPUT => 'self', UNSAFE => 1);
+    my @attributes = map { $_ => $attr{$_} } sort keys %attr;
 
     no warnings qw/ uninitialized /;
 
-    my $prefix = !!$Template::Caribou::TAG_INDENT_LEVEL 
+    my $prefix = !!$Template::Caribou::TAG_INDENT_LEVEL
         && "\n" . ( '  ' x $Template::Caribou::TAG_INDENT_LEVEL );
 
-    my $output = length($inner) 
-        ? Template::Caribou::String->new( "$prefix<${tag}$attrs>$inner$prefix</$tag>" ) 
-        : Template::Caribou::String->new( "$prefix<${tag}$attrs />" ) 
-        ;
+    if (length($inner)) {
+        $writer->startTag($tag, @attributes);
+        $writer->raw("$inner$prefix");
+        $writer->endTag($tag);
+    }
+    else {
+        $writer->emptyTag($tag, @attributes);
+    }
+
+    my $output = Template::Caribou::String->new( $prefix . $writer->to_string() );
 
     return print_raw( $output );
 }
 
 sub print_raw($text) {
     print ::RAW $text;
-    return $text; 
+    return $text;
 }
 
 1;
