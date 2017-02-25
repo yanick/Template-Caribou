@@ -9,25 +9,36 @@ use Carp;
 
 use Template::Caribou::Role;
 
-use parent 'Exporter::Tiny';
-use experimental 'signatures';
-use XML::Writer;
+use List::AllUtils qw/ pairmap pairgrep /;
 
+use parent 'Exporter::Tiny';
+use experimental 'signatures', 'postderef';
+use XML::Writer;
 
 our @EXPORT_OK = qw/ render_tag mytag attr /;
 
 
 sub attr(@){
-    return $Template::Caribou::Attr{$_[0]} if @_ == 1;
+    return $_{$_[0]} if @_ == 1;
 
     croak "number of attributes must be even" if @_ % 2;
 
+    no warnings 'uninitialized';
     while( my ( $k, $v ) = splice @_, 0, 2 ) {
         if ( $k =~ s/^\+// ) {
-            $Template::Caribou::Attr{$k} .= ' '. $v;
+            $_{$k} = { map { $_ => 1 } split ' ', $_{$k} }
+                unless ref $_{$k};
+
+            $_{$k}{$v} = 1;
+        }
+        elsif ( $k =~ s/^-// ) {
+            $_{$k} = { map { $_ => 1 } split ' ', $_{$k} }
+                unless ref $_{$k};
+
+            delete $_{$k}{$v};
         }
         else {
-            $Template::Caribou::Attr{$k} = $v;
+            $_{$k} = $v;
         }
     }
 
@@ -44,7 +55,19 @@ sub _generate_mytag {
     my $tagname = $arg->{tag} || 'div';
 
     my $groom = sub {
-        $_{class} ||= $arg->{class} if $arg->{class};
+        
+        no warnings 'uninitialized';
+
+        if( my $defaults = $arg->{classes} || $arg->{class} ) {
+            $_{class} = { map { $_ => 1 } split ' ', $_{class} }
+                unless ref $_{class};
+            if( ref $defaults ) {
+                $_{class}{$_} //= 1 for @$defaults;
+            }
+            else {
+                $_{class}{$_} //=  1 for split ' ', $defaults;
+            }
+        }
 
         $_{$_} ||= $arg->{attr}{$_} for eval { keys %{ $arg->{attr} } };
 
@@ -72,7 +95,7 @@ sub render_tag {
         roles => [ 'Template::Caribou::Role' ]
     )->new_object;
 
-    local %Template::Caribou::Attr;
+    local %_;
 
     my $inner = do {
         local $Template::Caribou::TAG_INDENT_LEVEL = $Template::Caribou::TAG_INDENT_LEVEL;
@@ -83,21 +106,25 @@ sub render_tag {
         $bou->get_render($sub);
     };
 
-    my %attr = %Template::Caribou::Attr;
-
     if ( $groom ) {
         local $_ = "$inner";  # stringification required in case it's an object
-        local %_ = %attr;
 
         $groom->();
 
-        ($inner,%attr) = ( $_, %_ );
+        $inner = $_;
     }
 
     # Setting UNSAFE here so that the inner can be written with raw
     # as we don't want inner to be escaped as it is already escaped
     my $writer = XML::Writer->new(OUTPUT => 'self', UNSAFE => 1);
-    my @attributes = map { $_ => $attr{$_} } sort keys %attr;
+    my @attributes = pairmap { (  $a => $b ) x (length $b > 0) }
+        map { 
+            $_ => ref $_{$_} 
+                ? join ' ', sort { $a cmp $b } pairmap { $a } pairgrep { $b } $_{$_}->%* 
+                : $_{$_} 
+        }
+       grep { defined $_{$_} }
+       sort keys %_;
 
     no warnings qw/ uninitialized /;
 

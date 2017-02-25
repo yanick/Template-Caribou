@@ -93,8 +93,6 @@ sub render {
     $output = Template::Caribou::String->new( $output ) 
         if $Template::Caribou::IN_RENDER;
 
-    $DB::single = $::NOW;
-    
     # called in a void context and inside a template => print it
     print ::RAW $output if $Template::Caribou::IN_RENDER;
 
@@ -106,6 +104,11 @@ sub _render ($self, $method, @args) {
             
     local $Template::Caribou::IN_RENDER = 1;
     local $Template::Caribou::OUTPUT;
+
+    unless(ref $method) {
+        $method = $self->can($method)
+            or die "no template named '$method' found\n";
+    }
 
     local *STDOUT;
     local *::RAW;

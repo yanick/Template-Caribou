@@ -1,9 +1,9 @@
 use strict;
 use warnings;
 
-use Test::More tests => 9;
+use Test::More tests => 10;
 
-use Template::Caribou::Tags qw/ render_tag /;
+use Template::Caribou::Tags qw/ render_tag attr /;
 
 local *::RAW;
 open ::RAW, '>', \my $raw;
@@ -62,4 +62,43 @@ subtest 'without indentation' => sub {
             }
         } 
     => qr/<div><div>one/;
+};
+
+subtest 'attributes via %_' => sub {
+    is render_tag( foo => sub {
+            $_{foo} = 'bar';
+            return;
+    }) => '<foo foo="bar" />';
+
+    is render_tag( foo => sub {
+            $_{class}{one} = 1;
+            $_{class}{two} = 1;
+            return;
+    }) => '<foo class="one two" />',
+        'class as hash';
+
+    is render_tag( foo => sub {
+            $_{class}{one} = 1;
+            $_{class}{two} = 0;
+            return;
+    }) => '<foo class="one" />',
+        'class as hash with a false value';
+
+    is render_tag( foo => sub {
+            $_{class}{one} = 1;
+            $_{class}{two} = 1;
+            attr '+class' => 'three';
+            return;
+    }) => '<foo class="one three two" />',
+        'class as hash *and* attr';
+
+    is render_tag( foo => sub {
+            attr class => 'potato mosquito';
+            attr '+class' => 'tomato';
+            $_{class}{avocado}++;
+            delete $_{class}{avocado};
+            attr '-class' => 'mosquito';
+            return;
+    }) => '<foo class="potato tomato" />',
+        'class as hash *and* attr';
 };
