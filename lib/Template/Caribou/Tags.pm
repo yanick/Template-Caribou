@@ -13,7 +13,7 @@ use List::AllUtils qw/ pairmap pairgrep /;
 
 use parent 'Exporter::Tiny';
 use experimental 'signatures', 'postderef';
-
+use XML::Writer;
 
 our @EXPORT_OK = qw/ render_tag mytag attr /;
 
@@ -92,7 +92,7 @@ sub render_tag {
 
     # need to use the object for calls to 'show'
     my $bou = $Template::Caribou::TEMPLATE || Moose::Meta::Class->create_anon_class(
-        roles => [ 'Template::Caribou::Role' ] 
+        roles => [ 'Template::Caribou::Role' ]
     )->new_object;
 
     local %_;
@@ -114,30 +114,40 @@ sub render_tag {
         $inner = $_;
     }
 
-    my $attrs = join ' ', '',
-        pairmap { (  qq{$a="$b"} ) x (length $b > 0) }
+    # Setting UNSAFE here so that the inner can be written with raw
+    # as we don't want inner to be escaped as it is already escaped
+    my $writer = XML::Writer->new(OUTPUT => 'self', UNSAFE => 1);
+    my @attributes = pairmap { (  $a => $b ) x (length $b > 0) }
         map { 
             $_ => ref $_{$_} 
                 ? join ' ', sort { $a cmp $b } pairmap { $a } pairgrep { $b } $_{$_}->%* 
                 : $_{$_} 
-        }  grep { defined $_{$_} } sort keys %_;
+        }
+       grep { defined $_{$_} }
+       sort keys %_;
 
     no warnings qw/ uninitialized /;
 
-    my $prefix = !!$Template::Caribou::TAG_INDENT_LEVEL 
+    my $prefix = !!$Template::Caribou::TAG_INDENT_LEVEL
         && "\n" . ( '  ' x $Template::Caribou::TAG_INDENT_LEVEL );
 
-    my $output = length($inner) 
-        ? Template::Caribou::String->new( "$prefix<${tag}$attrs>$inner$prefix</$tag>" ) 
-        : Template::Caribou::String->new( "$prefix<${tag}$attrs />" ) 
-        ;
+    if (length($inner)) {
+        $writer->startTag($tag, @attributes);
+        $writer->raw("$inner$prefix");
+        $writer->endTag($tag);
+    }
+    else {
+        $writer->emptyTag($tag, @attributes);
+    }
+
+    my $output = Template::Caribou::String->new( $prefix . $writer->to_string() );
 
     return print_raw( $output );
 }
 
 sub print_raw($text) {
     print ::RAW $text;
-    return $text; 
+    return $text;
 }
 
 1;

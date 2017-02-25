@@ -46,6 +46,7 @@ t/lib/UseCase/Two.pm
 t/lib/WithDirs/One.pm
 t/lib/WithDirs/One/alpha.bou
 t/render.t
+t/tag-attributes.t
 t/tags.t
 t/tags_extended.t
 t/tags_html.t
