@@ -8,7 +8,6 @@ MANIFEST.SKIP
 META.json
 META.yml
 Makefile.PL
-README
 SIGNATURE
 cpanfile
 doap.xml
@@ -46,6 +45,7 @@ t/lib/UseCase/Two.pm
 t/lib/WithDirs/One.pm
 t/lib/WithDirs/One/alpha.bou
 t/render.t
+t/tag-attributes.t
 t/tags.t
 t/tags_extended.t
 t/tags_html.t
@@ -53,5 +53,4 @@ t/tc-files.t
 t/template.t
 t/usecase_1.t
 t/usecase_2.t
-xt/release/pause-permissions.t
 xt/release/unused-vars.t

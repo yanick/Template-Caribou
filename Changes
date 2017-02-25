@@ -8,6 +8,8 @@ Revision history for Template-Caribou
   [ DOCUMENTATION ]
 
   [ ENHANCEMENTS ]
+  - Now using XML::Writer instead of crafting tags by hand. 
+    (GH#10, Lisa Hare)
 
   [ NEW FEATURES ]
 
