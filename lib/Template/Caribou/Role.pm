@@ -2,6 +2,7 @@ package Template::Caribou::Role;
 # ABSTRACT: Caribou core engine
 
 
+use 5.20.0;
 use strict;
 use warnings;
 no warnings qw/ uninitialized /;
@@ -13,7 +14,6 @@ use Template::Caribou::Utils;
 use Path::Tiny;
 
 use Template::Caribou::Tags;
-
 
 use List::AllUtils qw/ uniq any /;
 
