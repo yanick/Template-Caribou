@@ -4,16 +4,25 @@ Revision history for Template-Caribou
   [ API CHANGES ]
 
   [ BUG FIXES ]
-  - Bump minimum version to 5.20.0. (GH#11)
 
   [ DOCUMENTATION ]
 
   [ ENHANCEMENTS ]
-  - Use XML::Writer when creating tags to escape quotes. (GH#10, Lisa Hare)
 
   [ NEW FEATURES ]
 
   [ STATISTICS ]
+
+1.2.0 2017-02-25
+  [ BUG FIXES ]
+    - Bump minimum version to 5.20.0. (GH#11)
+
+  [ ENHANCEMENTS ]
+    - Use XML::Writer when creating tags to escape quotes. (GH#10, Lisa
+      Hare)
+
+  [ STATISTICS ]
+    - code churn: 5 files changed, 50 insertions(+), 15 deletions(-)
 
 1.1.0 2017-02-08
   [ ENHANCEMENTS ]
