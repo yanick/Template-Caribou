@@ -30,16 +30,27 @@ sub render_ok(&$$) {
 render_ok sub { submit "foo", id => 'bar'; } 
     => '<input id="bar" type="submit" value="foo" />', 'submit';
 
-
 render_ok sub { css "X" } 
     => '<style type="text/css">X</style>', 'css';
 
-render_ok sub { anchor "http://foo.com" => 'linkie' }
-    => '<a href="http://foo.com">linkie</a>', 'anchor';
+subtest anchor => sub {
+    render_ok sub { anchor "http://foo.com" => 'linkie' }
+        => '<a href="http://foo.com">linkie</a>', 'anchor';
 
-render_ok sub { anchor "http://foo.com" => sub {
-    print ::RAW "this <b>thing</b>";
-} } => '<a href="http://foo.com">this <b>thing</b></a>', 'anchor';
+    render_ok sub { anchor "http://foo.com" => sub {
+        print ::RAW "this <b>thing</b>";
+    } } => '<a href="http://foo.com">this <b>thing</b></a>', 'anchor';
+
+
+    # for when anchors are URIs...
+    package Foo { use overload '""' => sub { $_[0][0] }; }
+
+    my $foo = ['potato'];
+    bless $foo, 'Foo';
+
+    render_ok sub { anchor $foo => 'this' } => '<a href="potato">this</a>', 'when anchors are refs';
+
+};
 
 render_ok sub { image "/foo.jpg" } => '<img src="/foo.jpg" />', 'image';
 
