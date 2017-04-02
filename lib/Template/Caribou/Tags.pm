@@ -10,6 +10,7 @@ use Carp;
 use Template::Caribou::Role;
 
 use List::AllUtils qw/ pairmap pairgrep /;
+use Ref::Util qw/ is_plain_hashref /;
 
 use parent 'Exporter::Tiny';
 use experimental 'signatures', 'postderef';
@@ -119,7 +120,7 @@ sub render_tag {
     my $writer = XML::Writer->new(OUTPUT => 'self', UNSAFE => 1);
     my @attributes = pairmap { (  $a => $b ) x (length $b > 0) }
         map { 
-            $_ => ref $_{$_} 
+            $_ => is_plain_hashref($_{$_})
                 ? join ' ', sort { $a cmp $b } pairmap { $a } pairgrep { $b } $_{$_}->%* 
                 : $_{$_} 
         }
