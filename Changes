@@ -1,18 +1,11 @@
 Revision history for Template-Caribou
 
-{{$NEXT}}
-  [ API CHANGES ]
-
+1.2.1 2017-04-02
   [ BUG FIXES ]
-  - properly process tag attributes that are stringifable objects.
-
-  [ DOCUMENTATION ]
-
-  [ ENHANCEMENTS ]
-
-  [ NEW FEATURES ]
+    - properly process tag attributes that are stringifable objects.
 
   [ STATISTICS ]
+    - code churn: 3 files changed, 32 insertions(+), 10 deletions(-)
 
 1.2.0 2017-02-25
   [ BUG FIXES ]
