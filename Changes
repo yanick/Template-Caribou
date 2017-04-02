@@ -4,6 +4,7 @@ Revision history for Template-Caribou
   [ API CHANGES ]
 
   [ BUG FIXES ]
+  - properly process tag attributes that are stringifable objects.
 
   [ DOCUMENTATION ]
 
