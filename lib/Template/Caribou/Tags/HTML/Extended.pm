@@ -49,9 +49,7 @@ Generates a favicon link tag.
 
 =cut
 
-sub favicon($) {
-    my $url = shift;
-
+sub favicon($url) {
     render_tag( 'link', sub {
             attr rel => 'shortcut icon',
             href => $url
@@ -117,9 +115,7 @@ Shortcut for
 
 =cut
 
-sub javascript_include($) {
-    my $url = shift;
-
+sub javascript_include($url) {
     render_tag( 'script', sub {
         attr type => 'text/javascript',
              src => $url;
@@ -152,8 +148,7 @@ Wraps the I<$text> in a style element.
 
 =cut
 
-sub css($) {
-    my $css = shift;
+sub css($css) {
     render_tag( 'style', sub {
         attr type => 'text/css';
         $css;
@@ -209,12 +204,12 @@ Uses L<Text::MultiMarkdown>.
 
 =cut
 
-sub markdown($){
+sub markdown($md){
     require Text::MultiMarkdown;
 
-    return unless length $_[0];
+    return unless length $md;
 
-    my $value = Text::MultiMarkdown::markdown(shift);
+    my $value = Text::MultiMarkdown::markdown($md);
 
     print ::RAW $value;
 }
