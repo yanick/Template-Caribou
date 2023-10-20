@@ -1,6 +1,7 @@
 package Template::Caribou::Tags::HTML::Extended;
+our $AUTHORITY = 'cpan:YANICK';
 # ABSTRACT: custom HTML tags optimized for DWIMery
-
+$Template::Caribou::Tags::HTML::Extended::VERSION = '1.2.2';
 
 use strict;
 use warnings;
@@ -21,16 +22,6 @@ our @EXPORT = qw/
 
 /;
 
-=head2 doctype $type
-
-    doctype 'html5';
-    # <!DOCTYPE html>
-
-Prints the doctype declaration for the given type. 
-
-For the moment, only I<html 5> (or I<html5>) is supported as a type.
-
-=cut
 
 sub doctype($type="html 5") {
     if ( $type =~ /^html\s?5/ ) {
@@ -40,14 +31,6 @@ sub doctype($type="html 5") {
     croak "type '$type' not supported";
 }
 
-=head2 favicon $url
-
-Generates a favicon link tag.
-
-    favicon 'my_icon.png';
-    # <link rel="shortcut icon" href="my_icon.png" />
-
-=cut
 
 sub favicon($url) {
     render_tag( 'link', sub {
@@ -56,16 +39,6 @@ sub favicon($url) {
     } );
 }
 
-=head2 submit $value, %attr
-
-    submit 'foo';
-    # <input type="submit" value="foo" />
-
-Shortcut for
-
-    input { attr type => submit, value => $value, %attr; }
-
-=cut
 
 sub submit($value=undef, %attr) {
 
@@ -76,11 +49,6 @@ sub submit($value=undef, %attr) {
     });
 }
 
-=head2 less $script
-
-Compiles the LESS script into CSS. Requires L<CSS::LESSp>.
-
-=cut
 
 sub less($text) {
     my $css = join '', load_class('CSS::LESSp')->parse($text);
@@ -89,16 +57,6 @@ sub less($text) {
 }
 
 
-=head2 javascript $script
-
-    javascript q{ console.log( "Hello there!" ) };
-    # <script type="text/javascript">console.log( "Hello there!" )</script>
-
-Shortcut for 
-
-    <script type="text/javascript>$script</script>
-
-=cut
 
 sub javascript($script) {
     render_tag( 'script', sub {
@@ -107,13 +65,6 @@ sub javascript($script) {
     });
 }
 
-=head2 javascript_include $url
-
-Shortcut for 
-
-    <script type="text/javascript" src="http://..."> </script>
-
-=cut
 
 sub javascript_include($url) {
     render_tag( 'script', sub {
@@ -123,13 +74,6 @@ sub javascript_include($url) {
     });
 }
 
-=head2 css_include $url, %args
-
-    css_include 'public/bootstrap/css/bootstrap.min.css', media => 'screen';
-    # <link href="public/bootstrap/css/bootstrap.min.css" rel="stylesheet"
-    #       media="screen" />
-
-=cut
 
 sub css_include( $url, %args ) {
     render_tag( 'link', sub {
@@ -140,13 +84,6 @@ sub css_include( $url, %args ) {
     });
 }
 
-=head2 css $text
-
-Wraps the I<$text> in a style element.
-
-    <style type="text/css">$text</style>
-
-=cut
 
 sub css($css) {
     render_tag( 'style', sub {
@@ -155,20 +92,6 @@ sub css($css) {
     });
 };
 
-=head2 anchor $url, $inner
-
-Shortcut for <a>. I<$inner> can be either a string, or a subref.
-
-    anchor 'http://foo.com' => 'linkie';
-
-is equivalent to 
-
-    a {
-        attr href => 'http://foo.com';
-        'linkie';
-    }
-
-=cut
 
 sub anchor($href,$inner) {
     render_tag( 'a', $inner, sub {
@@ -176,14 +99,6 @@ sub anchor($href,$inner) {
     });
 }
 
-=head2 image $src, %attr
-
-    image 'kitten.jpg';
-    # <img src="kitten.jpg" />
-
-Shortcut for <img>.
-
-=cut
 
 sub image($src,%attr) {
 
@@ -196,13 +111,6 @@ sub image($src,%attr) {
     } );
 }
 
-=head2 markdown $text
-
-Converts the markdown $text into its html equivalent.
-
-Uses L<Text::MultiMarkdown>.
-
-=cut
 
 sub markdown($md){
     require Text::MultiMarkdown;
@@ -217,6 +125,18 @@ sub markdown($md){
 1;
 
 __END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+Template::Caribou::Tags::HTML::Extended - custom HTML tags optimized for DWIMery
+
+=head1 VERSION
+
+version 1.2.2
 
 =head1 SYNOPSIS
 
@@ -251,3 +171,98 @@ __END__
 
 Whereas L<Template::Caribou::Tags::HTML> offers straight function equivalents to their
 HTML tags, this module provides a more DWIM interface, and shortcut for often used patterns.
+
+=head2 doctype $type
+
+    doctype 'html5';
+    # <!DOCTYPE html>
+
+Prints the doctype declaration for the given type. 
+
+For the moment, only I<html 5> (or I<html5>) is supported as a type.
+
+=head2 favicon $url
+
+Generates a favicon link tag.
+
+    favicon 'my_icon.png';
+    # <link rel="shortcut icon" href="my_icon.png" />
+
+=head2 submit $value, %attr
+
+    submit 'foo';
+    # <input type="submit" value="foo" />
+
+Shortcut for
+
+    input { attr type => submit, value => $value, %attr; }
+
+=head2 less $script
+
+Compiles the LESS script into CSS. Requires L<CSS::LESSp>.
+
+=head2 javascript $script
+
+    javascript q{ console.log( "Hello there!" ) };
+    # <script type="text/javascript">console.log( "Hello there!" )</script>
+
+Shortcut for 
+
+    <script type="text/javascript>$script</script>
+
+=head2 javascript_include $url
+
+Shortcut for 
+
+    <script type="text/javascript" src="http://..."> </script>
+
+=head2 css_include $url, %args
+
+    css_include 'public/bootstrap/css/bootstrap.min.css', media => 'screen';
+    # <link href="public/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+    #       media="screen" />
+
+=head2 css $text
+
+Wraps the I<$text> in a style element.
+
+    <style type="text/css">$text</style>
+
+=head2 anchor $url, $inner
+
+Shortcut for <a>. I<$inner> can be either a string, or a subref.
+
+    anchor 'http://foo.com' => 'linkie';
+
+is equivalent to 
+
+    a {
+        attr href => 'http://foo.com';
+        'linkie';
+    }
+
+=head2 image $src, %attr
+
+    image 'kitten.jpg';
+    # <img src="kitten.jpg" />
+
+Shortcut for <img>.
+
+=head2 markdown $text
+
+Converts the markdown $text into its html equivalent.
+
+Uses L<Text::MultiMarkdown>.
+
+=head1 AUTHOR
+
+Yanick Champoux <yanick@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2023 by Yanick Champoux.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
